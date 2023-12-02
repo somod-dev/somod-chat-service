@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../node_modules/somod-http-extension/build/schemas/http-routes.json
+
+/chat/thread:
+  POST:
+    body:
+      parser: json
+      schema:
+        type: object
+        additionalProperties: false
+        required:
+          - participants
+        properties:
+          participants:
+            type: array
+            items:
+              type: string
+              pattern: ^[a-f0-9]{32}$
+            minItems: 2
+            maxItems: 2
+
+/chat/thread/{id}:
+  GET:
+    parameters:
+      - name: id
+        in: path
+        schema:
+          type: string
+          pattern: ^[a-f0-9]{32}$
+        required: true

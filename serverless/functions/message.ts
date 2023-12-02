@@ -14,13 +14,8 @@ const builder = new RouteBuilder();
 
 const dynamodb = new DynamoDBClient();
 
-const postMessageHandler: RouteHandler<MessageInput> = async (
-  request,
-  event
-) => {
-  const userId = (
-    event as unknown as EventWithMiddlewareContext<Record<string, unknown>>
-  ).somodMiddlewareContext.get(UserProviderMiddlewareKey) as string;
+const postMessageHandler: RouteHandler<MessageInput> = async request => {
+  const userId = request.body.from;
 
   const message = await putMessage(
     process.env.MESSAGE_BOX_TABLE_NAME + "",
@@ -42,6 +37,7 @@ const postMessageHandler: RouteHandler<MessageInput> = async (
     })
   };
 };
+
 const syncMessagesHandler: RouteHandler<
   null,
   Record<string, unknown>,

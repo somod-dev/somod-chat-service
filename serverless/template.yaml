@@ -8,6 +8,23 @@ Resources:
       default: true
     Properties: {}
 
+  ThreadTable:
+    Type: AWS::DynamoDB::Table
+    SOMOD::Output:
+      default: true
+      attributes: [Arn]
+    Properties:
+      TableName:
+        SOMOD::ResourceName: Thread
+      BillingMode: PAY_PER_REQUEST
+      DeletionProtectionEnabled: true
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+
   MessageBox:
     Type: AWS::DynamoDB::Table
     SOMOD::Output:
@@ -112,8 +129,10 @@ Resources:
           name: commonlibs
           libraries:
             - decorated-ajv
+
   Message:
     Type: AWS::Serverless::Function
+    SOMOD::Access: public
     Properties:
       FunctionName:
         SOMOD::ResourceName: MessageApi
@@ -161,6 +180,56 @@ Resources:
                 resource: ChatApi
             Method: GET
             Path: /chat/sync-messages
+
+  Thread:
+    Type: AWS::Serverless::Function
+    SOMOD::Access: public
+    Properties:
+      FunctionName:
+        SOMOD::ResourceName: ThreadApi
+      CodeUri:
+        SOMOD::Function:
+          name: thread
+          type: HttpApi
+          middlewares:
+            - module: somod-http-extension
+              resource: SomodHttpMiddleware
+      Layers:
+        - SOMOD::Ref:
+            resource: CommonLibsLayer
+      Environment:
+        Variables:
+          THREAD_TABLE_NAME:
+            SOMOD::Ref:
+              resource: ThreadTable
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Resource:
+                - SOMOD::Ref:
+                    resource: ThreadTable
+                    attribute: Arn
+              Action:
+                - "dynamodb:PutItem"
+                - "dynamodb:GetItem"
+      Events:
+        CreateThread:
+          Type: HttpApi
+          Properties:
+            ApiId:
+              SOMOD::Ref:
+                resource: ChatApi
+            Method: POST
+            Path: /chat/thread
+        GetThread:
+          Type: HttpApi
+          Properties:
+            ApiId:
+              SOMOD::Ref:
+                resource: ChatApi
+            Method: GET
+            Path: /chat/thread/{id}
 
 Outputs:
   chat.http-api.id:
