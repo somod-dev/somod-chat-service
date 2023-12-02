@@ -152,6 +152,10 @@ Resources:
           MESSAGE_BOX_TABLE_NAME:
             SOMOD::Ref:
               resource: MessageBox
+          THREAD_TABLE_NAME:
+            SOMOD::Ref:
+              resource: ThreadTable
+
       Policies:
         - Version: "2012-10-17"
           Statement:
@@ -163,6 +167,13 @@ Resources:
               Action:
                 - "dynamodb:PutItem"
                 - "dynamodb:Query"
+            - Effect: Allow
+              Resource:
+                - SOMOD::Ref:
+                    resource: ThreadTable
+                    attribute: Arn
+              Action:
+                - "dynamodb:GetItem"
       Events:
         PostMessage:
           Type: HttpApi
