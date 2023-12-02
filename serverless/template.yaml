@@ -1,0 +1,171 @@
+# yaml-language-server: $schema=../node_modules/somod-schema/schemas/serverless-template/index.json
+
+Resources:
+  ChatApi:
+    Type: AWS::Serverless::HttpApi
+    SOMOD::Access: public
+    SOMOD::Output:
+      default: true
+    Properties: {}
+
+  MessageBox:
+    Type: AWS::DynamoDB::Table
+    SOMOD::Output:
+      default: true
+      attributes: [Arn, StreamArn]
+    Properties:
+      TableName:
+        SOMOD::ResourceName: MessageBox
+      BillingMode: PAY_PER_REQUEST
+      DeletionProtectionEnabled: true
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        - AttributeName: seqNo
+          KeyType: RANGE
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: seqNo
+          AttributeType: "N"
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE
+
+  MessageStreamHandlerDLQ:
+    Type: AWS::SQS::Queue
+    SOMOD::Output:
+      default: true
+      attributes: [Arn, QueueName, QueueUrl]
+    Properties:
+      QueueName:
+        SOMOD::ResourceName: MessageStreamHandlerDLQ
+
+  MessageStreamHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        SOMOD::ResourceName: MsgStrmHandler
+      CodeUri:
+        SOMOD::Function:
+          name: messageStreamHandler
+          type: DynamoDB
+      Environment:
+        Variables:
+          MESSAGE_BOX_TABLE_NAME:
+            SOMOD::Ref:
+              resource: MessageBox
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Resource:
+                - SOMOD::Ref:
+                    resource: MessageBox
+                    attribute: Arn
+              Action:
+                - "dynamodb:PutItem"
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Resource:
+                - SOMOD::Ref:
+                    resource: MessageStreamHandlerDLQ
+                    attribute: Arn
+              Action:
+                - "sqs:SendMessage"
+      Events:
+        Stream:
+          Type: DynamoDB
+          Properties:
+            Stream:
+              SOMOD::Ref:
+                resource: MessageBox
+                attribute: StreamArn
+            BatchSize: 1
+            MaximumRetryAttempts: 3
+            StartingPosition: LATEST
+            DestinationConfig:
+              OnFailure:
+                Destination:
+                  SOMOD::Ref:
+                    resource: MessageStreamHandlerDLQ
+                    attribute: Arn
+
+  UserProviderMiddleware:
+    Type: SOMOD::Serverless::FunctionMiddleware
+    SOMOD::Access: public
+    SOMOD::Output:
+      default: true
+    Properties:
+      CodeUri:
+        SOMOD::FunctionMiddleware:
+          name: userProvider
+
+  CommonLibsLayer:
+    Type: AWS::Serverless::LayerVersion
+    SOMOD::Output:
+      default: true
+    Properties:
+      RetentionPolicy: Delete
+      ContentUri:
+        SOMOD::FunctionLayer:
+          name: commonlibs
+          libraries:
+            - decorated-ajv
+  Message:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        SOMOD::ResourceName: MessageApi
+      CodeUri:
+        SOMOD::Function:
+          name: message
+          type: HttpApi
+          middlewares:
+            - module: somod-http-extension
+              resource: SomodHttpMiddleware
+            - resource: UserProviderMiddleware
+      Layers:
+        - SOMOD::Ref:
+            resource: CommonLibsLayer
+      Environment:
+        Variables:
+          MESSAGE_BOX_TABLE_NAME:
+            SOMOD::Ref:
+              resource: MessageBox
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Resource:
+                - SOMOD::Ref:
+                    resource: MessageBox
+                    attribute: Arn
+              Action:
+                - "dynamodb:PutItem"
+                - "dynamodb:Query"
+      Events:
+        PostMessage:
+          Type: HttpApi
+          Properties:
+            ApiId:
+              SOMOD::Ref:
+                resource: ChatApi
+            Method: POST
+            Path: /chat/post-message
+        SyncMessages:
+          Type: HttpApi
+          Properties:
+            ApiId:
+              SOMOD::Ref:
+                resource: ChatApi
+            Method: GET
+            Path: /chat/sync-messages
+
+Outputs:
+  chat.http-api.id:
+    Fn::Sub:
+      - https://${apiId}.execute-api.${AWS::Region}.amazonaws.com/
+      - apiId:
+          SOMOD::Ref:
+            resource: ChatApi

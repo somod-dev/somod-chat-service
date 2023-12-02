@@ -1,0 +1,47 @@
+{
+  "name": "astropath-chat-backend",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "prettier": "npx prettier --check --ignore-unknown --no-error-on-unmatched-pattern ./**/*",
+    "eslint": "npx eslint ./ --no-error-on-unmatched-pattern",
+    "prebuild": "npm run prettier && npm run eslint",
+    "build": "npx somod build --serverless",
+    "pretest": "npm run build",
+    "test": "echo 'No Tests'",
+    "prepack": "npm run test",
+    "deploy": "npx somod deploy"
+  },
+  "keywords": [],
+  "author": "Raghavendra K R <raghavendra@sodaru.com>",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.130",
+    "@types/uuid": "^9.0.7",
+    "aws-sdk": "^2.1510.0",
+    "decorated-ajv": "^1.1.0",
+    "eslint-config-sodaru": "^1.0.1",
+    "prettier-config-sodaru": "^1.0.0",
+    "somod": "^1.17.3",
+    "somod-middleware": "^1.17.3"
+  },
+  "module": "build/lib/index.js",
+  "typings": "build/lib/index.d.ts",
+  "files": [
+    "build"
+  ],
+  "sideEffects": false,
+  "somod": "1.17.3",
+  "eslintConfig": {
+    "extends": [
+      "sodaru"
+    ]
+  },
+  "prettier": "prettier-config-sodaru",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.465.0",
+    "@aws-sdk/util-dynamodb": "^3.465.0",
+    "somod-http-extension": "^1.2.2",
+    "uuid": "^9.0.1"
+  }
+}

@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../node_modules/somod-http-extension/build/schemas/http-routes.json
+
+/chat/post-message:
+  POST:
+    body:
+      parser: json
+      schema:
+        type: object
+        additionalProperties: false
+        required:
+          - threadId
+          - type
+          - action
+          - from
+          - message
+        properties:
+          threadId:
+            type: string
+            pattern: ^[a-f0-9]{32}$
+          type:
+            enum:
+              - "text"
+          action:
+            enum:
+              - "new"
+              - "edit"
+              - "delete"
+          from:
+            type: string
+            pattern: ^[a-f0-9]{32}$
+          message:
+            type: string
+            maxLength: 256
+
+/chat/sync-messages:
+  GET:
+    parameters:
+      - name: from
+        in: query
+        schema:
+          type: number
+          multipleOf: 1
+          minimum: 0
+        required: false
