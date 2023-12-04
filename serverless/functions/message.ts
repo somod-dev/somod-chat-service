@@ -1,36 +1,24 @@
 import { RouteBuilder, RouteHandler } from "somod-http-extension";
-import { MessageInput, Thread, UserProviderMiddlewareKey } from "../../lib";
+import { MessageInput, UserProviderMiddlewareKey } from "../../lib";
 import { putMessage } from "../../lib/message";
 import { EventWithMiddlewareContext } from "somod";
 import { v1 as v1uuid } from "uuid";
 import {
   QueryCommand,
   DynamoDBClient,
-  QueryCommandInput,
-  GetItemCommand
+  QueryCommandInput
 } from "@aws-sdk/client-dynamodb";
-import { convertToAttr, marshall, unmarshall } from "@aws-sdk/util-dynamodb";
-import { cache } from "../../lib/cache";
+import { convertToAttr, unmarshall } from "@aws-sdk/util-dynamodb";
+import { threadCache } from "../../lib/threadCache";
 
 const dynamodb = new DynamoDBClient();
-const threadCache = cache(100, 60000);
 
 const builder = new RouteBuilder();
 
 const postMessageHandler: RouteHandler<MessageInput> = async request => {
   const userId = request.body.from;
 
-  const thread = await threadCache.get(request.body.threadId, async () => {
-    const threadResult = await dynamodb.send(
-      new GetItemCommand({
-        TableName: process.env.THREAD_TABLE_NAME,
-        Key: marshall({ id: request.body.threadId })
-      })
-    );
-    return threadResult.Item
-      ? (unmarshall(threadResult.Item) as Thread)
-      : undefined;
-  });
+  const thread = await threadCache.get(request.body.threadId);
 
   if (thread === undefined) {
     return {
