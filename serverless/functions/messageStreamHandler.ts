@@ -4,6 +4,9 @@ import { threadCache } from "../../lib/threadCache";
 import { putMessage } from "../../lib/message";
 import { unmarshall } from "@aws-sdk/util-dynamodb";
 import { AttributeValue } from "@aws-sdk/client-dynamodb";
+import { PublishCommand, SNSClient } from "@aws-sdk/client-sns";
+
+const sns = new SNSClient();
 
 const transfer = async (message: Message) => {
   const thread = await threadCache.get(message.threadId);
@@ -23,6 +26,16 @@ const transfer = async (message: Message) => {
   }
 };
 
+const notify = async (userId: string, message: Message) => {
+  const publishCommand = new PublishCommand({
+    TopicArn: process.env.MSG_NOTIFICATION_TOPIC + "",
+    Message: JSON.stringify(message),
+    MessageAttributes: { userId: { DataType: "String", StringValue: userId } }
+  });
+
+  await sns.send(publishCommand);
+};
+
 const streamHandler: DynamoDBStreamHandler = async event => {
   const messageRaw = event.Records[0]?.dynamodb?.NewImage;
   if (messageRaw) {
@@ -32,10 +45,13 @@ const streamHandler: DynamoDBStreamHandler = async event => {
 
     if (message.from === message.userId) {
       await transfer(message);
+    } else {
+      await notify(message.userId, message);
     }
   } else {
     // eslint-disable-next-line no-console
-    console.log(messageRaw);
+    console.error(event);
+    throw new Error("messageRaw is not found in the event");
   }
 };
 

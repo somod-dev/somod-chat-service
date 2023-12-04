@@ -74,6 +74,9 @@ Resources:
           THREAD_TABLE_NAME:
             SOMOD::Ref:
               resource: ThreadTable
+          MSG_NOTIFICATION_TOPIC:
+            SOMOD::Ref:
+              resource: MessageNotificationTopic
       Policies:
         - Version: "2012-10-17"
           Statement:
@@ -91,6 +94,12 @@ Resources:
                     attribute: Arn
               Action:
                 - "dynamodb:GetItem"
+            - Effect: Allow
+              Resource:
+                - SOMOD::Ref:
+                    resource: MessageNotificationTopic
+              Action:
+                - "sns:Publish"
             - Effect: Allow
               Resource:
                 - SOMOD::Ref:
@@ -249,6 +258,17 @@ Resources:
                 resource: ChatApi
             Method: GET
             Path: /chat/thread/{id}
+
+  MessageNotificationTopic:
+    Type: AWS::SNS::Topic
+    SOMOD::Access: public
+    SOMOD::Output:
+      default: true
+      attributes:
+        - TopicName
+    Properties:
+      TopicName:
+        SOMOD::ResourceName: MsgNotificationTopic
 
 Outputs:
   chat.http-api.id:
