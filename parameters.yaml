@@ -3,3 +3,7 @@
 parameters:
   chat.http-api.id:
     type: string
+  chat.websocket-api.id:
+    type: string
+  chat.enable.websocket:
+    type: boolean
