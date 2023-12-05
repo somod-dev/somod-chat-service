@@ -293,7 +293,6 @@ Resources:
         SOMOD::Ref:
           resource: WebSocketApi
       RouteKey: $connect
-      AuthorizationType: NONE
       OperationName: ConnectRoute
       Target:
         Fn::Join:
@@ -331,7 +330,6 @@ Resources:
         SOMOD::Ref:
           resource: WebSocketApi
       RouteKey: $disconnect
-      AuthorizationType: NONE
       OperationName: DisconnectRoute
       Target:
         Fn::Join:
@@ -357,6 +355,43 @@ Resources:
           - OnDisconnectFunctionArn:
               SOMOD::Ref:
                 resource: OnDisconnectFunction
+                attribute: Arn
+  DefaultRoute:
+    Type: AWS::ApiGatewayV2::Route
+    SOMOD::CreateIf:
+      SOMOD::Equals:
+        - SOMOD::Parameter: chat.enable.websocket
+        - true
+    Properties:
+      ApiId:
+        SOMOD::Ref:
+          resource: WebSocketApi
+      RouteKey: $default
+      OperationName: DefaultRoute
+      Target:
+        Fn::Join:
+          - "/"
+          - - "integrations"
+            - SOMOD::Ref:
+                resource: DefaultInteg
+  DefaultInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    SOMOD::CreateIf:
+      SOMOD::Equals:
+        - SOMOD::Parameter: chat.enable.websocket
+        - true
+    Properties:
+      ApiId:
+        SOMOD::Ref:
+          resource: WebSocketApi
+      Description: Default Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub:
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OnMessageFunctionArn}/invocations
+          - OnMessageFunctionArn:
+              SOMOD::Ref:
+                resource: OnMessageFunction
                 attribute: Arn
   Stage:
     Type: AWS::ApiGatewayV2::Stage
@@ -410,8 +445,10 @@ Resources:
     Properties:
       CodeUri:
         SOMOD::Function:
-          type: Websocket
+          type: WebSocket
           name: wsOnConnect
+          middlewares:
+            - resource: UserProviderMiddleware
       Environment:
         Variables:
           CONNECTIONS_TABLE_NAME:
@@ -451,7 +488,7 @@ Resources:
     Properties:
       CodeUri:
         SOMOD::Function:
-          type: Websocket
+          type: WebSocket
           name: wsOnDisconnect
       Environment:
         Variables:
@@ -480,6 +517,47 @@ Resources:
         SOMOD::Ref:
           resource: OnDisconnectFunction
       Principal: apigateway.amazonaws.com
+
+  OnMessageFunction:
+    Type: AWS::Serverless::Function
+    SOMOD::CreateIf:
+      SOMOD::Equals:
+        - SOMOD::Parameter: chat.enable.websocket
+        - true
+    SOMOD::Output:
+      attributes:
+        - Arn
+    Properties:
+      CodeUri:
+        SOMOD::Function:
+          type: WebSocket
+          name: wsOnMessage
+
+      Environment:
+        Variables:
+          MESSAGE_BOX_TABLE_NAME:
+            SOMOD::Ref:
+              resource: MessageBox
+          THREAD_TABLE_NAME:
+            SOMOD::Ref:
+              resource: ThreadTable
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Resource:
+                - SOMOD::Ref:
+                    resource: MessageBox
+                    attribute: Arn
+              Action:
+                - "dynamodb:PutItem"
+            - Effect: Allow
+              Resource:
+                - SOMOD::Ref:
+                    resource: ThreadTable
+                    attribute: Arn
+              Action:
+                - "dynamodb:GetItem"
 
   SendMessageFunction:
     Type: AWS::Serverless::Function
@@ -536,43 +614,6 @@ Resources:
 
       Timeout: 300 # 5 minutes
 
-  OnMessageFunction:
-    Type: AWS::Serverless::Function
-    SOMOD::CreateIf:
-      SOMOD::Equals:
-        - SOMOD::Parameter: chat.enable.websocket
-        - true
-    Properties:
-      CodeUri:
-        SOMOD::Function:
-          type: HttpApi
-          name: wsOnMessage
-      Environment:
-        Variables:
-          MESSAGE_BOX_TABLE_NAME:
-            SOMOD::Ref:
-              resource: MessageBox
-          THREAD_TABLE_NAME:
-            SOMOD::Ref:
-              resource: ThreadTable
-      Policies:
-        - Version: "2012-10-17"
-          Statement:
-            - Effect: Allow
-              Resource:
-                - SOMOD::Ref:
-                    resource: MessageBox
-                    attribute: Arn
-              Action:
-                - "dynamodb:PutItem"
-            - Effect: Allow
-              Resource:
-                - SOMOD::Ref:
-                    resource: ThreadTable
-                    attribute: Arn
-              Action:
-                - "dynamodb:GetItem"
-
 Outputs:
   chat.http-api.id:
     Fn::Sub:
@@ -586,7 +627,7 @@ Outputs:
           - SOMOD::Parameter: chat.enable.websocket
           - true
       - Fn::Sub:
-          - https://${apiId}.execute-api.${AWS::Region}.amazonaws.com/
+          - wss://${apiId}.execute-api.${AWS::Region}.amazonaws.com/$default
           - apiId:
               SOMOD::Ref:
                 resource: WebSocketApi
