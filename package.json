@@ -1,7 +1,7 @@
 {
-  "name": "astropath-chat-backend",
+  "name": "somod-chat-service",
   "version": "1.0.0",
-  "description": "",
+  "description": "Serverless Chat Service from SOMOD",
   "scripts": {
     "prettier": "npx prettier --check --ignore-unknown --no-error-on-unmatched-pattern ./**/*",
     "eslint": "npx eslint ./ --no-error-on-unmatched-pattern",
@@ -12,9 +12,16 @@
     "prepack": "npm run test",
     "deploy": "npx somod deploy"
   },
-  "keywords": [],
+  "keywords": [
+    "somod",
+    "chat",
+    "serverless",
+    "sam",
+    "websocket",
+    "aws"
+  ],
   "author": "Raghavendra K R <raghavendra@sodaru.com>",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.130",
     "@types/uuid": "^9.0.7",
@@ -42,7 +49,8 @@
     "@aws-sdk/client-dynamodb": "^3.465.0",
     "@aws-sdk/client-sns": "^3.465.0",
     "@aws-sdk/util-dynamodb": "^3.465.0",
-    "somod-http-extension": "^1.2.2",
+    "somod-http-extension": "^1.2.3",
+    "somod-websocket-extension": "^0.0.1",
     "uuid": "^9.0.1"
   }
 }

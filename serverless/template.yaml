@@ -17,7 +17,6 @@ Resources:
       TableName:
         SOMOD::ResourceName: Thread
       BillingMode: PAY_PER_REQUEST
-      DeletionProtectionEnabled: true
       KeySchema:
         - AttributeName: id
           KeyType: HASH
@@ -34,7 +33,6 @@ Resources:
       TableName:
         SOMOD::ResourceName: MessageBox
       BillingMode: PAY_PER_REQUEST
-      DeletionProtectionEnabled: true
       KeySchema:
         - AttributeName: userId
           KeyType: HASH
@@ -362,6 +360,8 @@ Resources:
       SOMOD::Equals:
         - SOMOD::Parameter: chat.enable.websocket
         - true
+    SOMOD::Output:
+      default: true
     Properties:
       ApiId:
         SOMOD::Ref:
@@ -374,12 +374,30 @@ Resources:
           - - "integrations"
             - SOMOD::Ref:
                 resource: DefaultInteg
+  DefaultRouteResponse:
+    Type: "AWS::ApiGatewayV2::RouteResponse"
+    SOMOD::CreateIf:
+      SOMOD::Equals:
+        - SOMOD::Parameter: chat.enable.websocket
+        - true
+    SOMOD::Output:
+      default: true
+    Properties:
+      RouteId:
+        SOMOD::Ref:
+          resource: DefaultRoute
+      ApiId:
+        SOMOD::Ref:
+          resource: WebSocketApi
+      RouteResponseKey: $default
   DefaultInteg:
     Type: AWS::ApiGatewayV2::Integration
     SOMOD::CreateIf:
       SOMOD::Equals:
         - SOMOD::Parameter: chat.enable.websocket
         - true
+    SOMOD::Output:
+      default: true
     Properties:
       ApiId:
         SOMOD::Ref:
@@ -393,6 +411,22 @@ Resources:
               SOMOD::Ref:
                 resource: OnMessageFunction
                 attribute: Arn
+
+  DefaultIntegResponse:
+    Type: AWS::ApiGatewayV2::IntegrationResponse
+    SOMOD::CreateIf:
+      SOMOD::Equals:
+        - SOMOD::Parameter: chat.enable.websocket
+        - true
+    Properties:
+      ApiId:
+        SOMOD::Ref:
+          resource: WebSocketApi
+      IntegrationId:
+        SOMOD::Ref:
+          resource: DefaultInteg
+      IntegrationResponseKey: $default
+
   Stage:
     Type: AWS::ApiGatewayV2::Stage
     SOMOD::CreateIf:
@@ -476,6 +510,12 @@ Resources:
         SOMOD::Ref:
           resource: OnConnectFunction
       Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub:
+          - arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiId}/$default/$connect
+          - ApiId:
+              SOMOD::Ref:
+                resource: WebSocketApi
   OnDisconnectFunction:
     Type: AWS::Serverless::Function
     SOMOD::CreateIf:
@@ -517,6 +557,12 @@ Resources:
         SOMOD::Ref:
           resource: OnDisconnectFunction
       Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub:
+          - arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiId}/$default/$disconnect
+          - ApiId:
+              SOMOD::Ref:
+                resource: WebSocketApi
 
   OnMessageFunction:
     Type: AWS::Serverless::Function
@@ -532,7 +578,12 @@ Resources:
         SOMOD::Function:
           type: WebSocket
           name: wsOnMessage
-
+          middlewares:
+            - module: somod-websocket-extension
+              resource: SomodWebSocketMiddleware
+      Layers:
+        - SOMOD::Ref:
+            resource: CommonLibsLayer
       Environment:
         Variables:
           MESSAGE_BOX_TABLE_NAME:
@@ -558,7 +609,24 @@ Resources:
                     attribute: Arn
               Action:
                 - "dynamodb:GetItem"
-
+  OnMessagePermission:
+    Type: AWS::Lambda::Permission
+    SOMOD::CreateIf:
+      SOMOD::Equals:
+        - SOMOD::Parameter: chat.enable.websocket
+        - true
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        SOMOD::Ref:
+          resource: OnMessageFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub:
+          - arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiId}/$default/$default
+          - ApiId:
+              SOMOD::Ref:
+                resource: WebSocketApi
   SendMessageFunction:
     Type: AWS::Serverless::Function
     SOMOD::CreateIf:

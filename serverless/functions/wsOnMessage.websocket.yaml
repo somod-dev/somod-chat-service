@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../../node_modules/somod-websocket-extension/build/schemas/websocket-routes.json
+
+$default:
+  body:
+    parser: json
+    schema:
+      type: object
+      additionalProperties: false
+      required:
+        - wsMsgId
+        - threadId
+        - type
+        - action
+        - from
+        - message
+      properties:
+        wsMsgId:
+          type: string
+          pattern: ^[a-f0-9]{32}$
+        threadId:
+          type: string
+          pattern: ^[a-f0-9]{32}$
+        type:
+          enum:
+            - "text"
+        action:
+          enum:
+            - "new"
+            - "edit"
+            - "delete"
+        from:
+          type: string
+          pattern: ^[a-f0-9]{32}$
+        message:
+          type: string
+          maxLength: 256
