@@ -1,6 +1,6 @@
 {
   "name": "somod-chat-service",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Serverless Chat Service from SOMOD",
   "scripts": {
     "prettier": "npx prettier --check --ignore-unknown --no-error-on-unmatched-pattern ./**/*",
@@ -46,11 +46,12 @@
   },
   "prettier": "prettier-config-sodaru",
   "dependencies": {
+    "@aws-sdk/client-apigatewaymanagementapi": "^3.465.0",
     "@aws-sdk/client-dynamodb": "^3.465.0",
     "@aws-sdk/client-sns": "^3.465.0",
     "@aws-sdk/util-dynamodb": "^3.465.0",
     "somod-http-extension": "^1.2.3",
-    "somod-websocket-extension": "^0.0.1",
+    "somod-websocket-extension": "^1.0.0",
     "uuid": "^9.0.1"
   }
 }

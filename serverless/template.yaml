@@ -627,7 +627,7 @@ Resources:
           - ApiId:
               SOMOD::Ref:
                 resource: WebSocketApi
-  SendMessageFunction:
+  NotifyMessageFunction:
     Type: AWS::Serverless::Function
     SOMOD::CreateIf:
       SOMOD::Equals:
@@ -637,7 +637,7 @@ Resources:
       CodeUri:
         SOMOD::Function:
           type: SNS
-          name: wsSendMessage
+          name: wsNotifyMessage
       Environment:
         Variables:
           CONNECTIONS_TABLE_NAME:
@@ -657,11 +657,14 @@ Resources:
           Statement:
             - Effect: Allow
               Resource:
-                - SOMOD::Ref:
-                    resource: ConnectionsTable
-                    attribute: Arn
+                - Fn::Sub:
+                    - ${ConnectionsTableArn}/index/ByUserId
+                    - ConnectionsTableArn:
+                        SOMOD::Ref:
+                          resource: ConnectionsTable
+                          attribute: Arn
               Action:
-                - "dynamodb:GetItem"
+                - "dynamodb:Query"
         - Statement:
             - Effect: Allow
               Action:

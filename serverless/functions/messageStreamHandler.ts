@@ -43,10 +43,12 @@ const streamHandler: DynamoDBStreamHandler = async event => {
       messageRaw as Record<string, AttributeValue>
     ) as Message & { userId: string };
 
-    if (message.from === message.userId) {
-      await transfer(message);
+    const { userId, ...msg } = message;
+
+    if (message.from === userId) {
+      await transfer(msg);
     } else {
-      await notify(message.userId, message);
+      await notify(userId, msg);
     }
   } else {
     // eslint-disable-next-line no-console

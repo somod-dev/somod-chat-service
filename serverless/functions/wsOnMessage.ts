@@ -31,11 +31,13 @@ builder.add(
       };
     }
 
+    const { wsMsgId, ...msg } = message.body;
+
     const messageResult = await putMessage(
       process.env.MESSAGE_BOX_TABLE_NAME + "",
       userId,
       {
-        ...message.body,
+        ...msg,
         id: v1uuid().split("-").join(""),
         sentAt: Date.now()
       }
@@ -45,7 +47,7 @@ builder.add(
       statusCode: 200,
       headers: { "Content-Type": "application-json" },
       body: JSON.stringify({
-        wsMsgId: message.body.wsMsgId,
+        wsMsgId,
         id: messageResult.id,
         seqNo: messageResult.seqNo,
         sentAt: messageResult.sentAt

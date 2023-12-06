@@ -16,17 +16,19 @@ npm install somod-chat-service
 
 ### Apis
 
-> : TODO
+> : TODO for doc:
+
+refer template for available APIs
 
 ### Extending
 
-> : TODO
+> : TODO for doc
 
 ## Issues
 
 The project issues, features, and milestones are maintained in this GitHub repo.
 
-Create issues or feature requests at https://github.com/somod-dev/somod-http-extension/issues
+Create issues or feature requests at https://github.com/somod-dev/somod-chat-service/issues
 
 ## Contributions
 
