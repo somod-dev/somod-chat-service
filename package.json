@@ -10,7 +10,8 @@
     "pretest": "npm run build",
     "test": "echo 'No Tests'",
     "prepack": "npm run test",
-    "deploy": "npx somod deploy"
+    "deploy": "npx somod deploy",
+    "postversion": "git push --follow-tags"
   },
   "keywords": [
     "somod",
