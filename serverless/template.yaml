@@ -283,10 +283,11 @@ Resources:
 
   ConnectRoute:
     Type: AWS::ApiGatewayV2::Route
-    SOMOD::CreateIf:
-      SOMOD::Equals:
-        - SOMOD::Parameter: chat.enable.websocket
-        - true
+    # SOMOD::CreateIf:
+    #   SOMOD::Equals:
+    #     - SOMOD::Parameter: chat.enable.websocket
+    #     - true
+    SOMOD::Access: public
     Properties:
       ApiId:
         SOMOD::Ref:
