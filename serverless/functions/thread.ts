@@ -49,7 +49,7 @@ const getThread: RouteHandler<null, { id: string }> = async request => {
     : { statusCode: 404 };
 };
 
-builder.add("/chat/thread", "POST", createThread);
-builder.add("/chat/thread/{id}", "GET", getThread);
+builder.add("/thread", "POST", createThread);
+builder.add("/thread/{id}", "GET", getThread);
 
 export default builder.getHandler();

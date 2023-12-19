@@ -104,7 +104,7 @@ const syncMessagesHandler: RouteHandler<
   };
 };
 
-builder.add("/chat/post-message", "POST", postMessageHandler);
-builder.add("/chat/sync-messages", "GET", syncMessagesHandler);
+builder.add("/post-message", "POST", postMessageHandler);
+builder.add("/sync-messages", "GET", syncMessagesHandler);
 
 export default builder.getHandler();

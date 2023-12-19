@@ -197,7 +197,7 @@ Resources:
               SOMOD::Ref:
                 resource: ChatApi
             Method: POST
-            Path: /chat/post-message
+            Path: /post-message
         SyncMessages:
           Type: HttpApi
           Properties:
@@ -205,7 +205,7 @@ Resources:
               SOMOD::Ref:
                 resource: ChatApi
             Method: GET
-            Path: /chat/sync-messages
+            Path: /sync-messages
 
   Thread:
     Type: AWS::Serverless::Function
@@ -247,7 +247,7 @@ Resources:
               SOMOD::Ref:
                 resource: ChatApi
             Method: POST
-            Path: /chat/thread
+            Path: /thread
         GetThread:
           Type: HttpApi
           Properties:
@@ -255,7 +255,7 @@ Resources:
               SOMOD::Ref:
                 resource: ChatApi
             Method: GET
-            Path: /chat/thread/{id}
+            Path: /thread/{id}
 
   MessageNotificationTopic:
     Type: AWS::SNS::Topic
