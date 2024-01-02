@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../node_modules/somod-http-extension/build/schemas/http-routes.json
 
-/chat/thread:
+/thread:
   POST:
     body:
       parser: json
@@ -18,7 +18,7 @@
             minItems: 2
             maxItems: 2
 
-/chat/thread/{id}:
+/thread/{id}:
   GET:
     parameters:
       - name: id

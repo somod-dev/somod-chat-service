@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../node_modules/somod-http-extension/build/schemas/http-routes.json
 
-/chat/post-message:
+/post-message:
   POST:
     body:
       parser: json
@@ -32,7 +32,7 @@
             type: string
             maxLength: 256
 
-/chat/sync-messages:
+/sync-messages:
   GET:
     parameters:
       - name: from
