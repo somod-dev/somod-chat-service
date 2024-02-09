@@ -3,13 +3,17 @@ import { MessageInput } from "../../lib/types";
 import { threadCache } from "../../lib/threadCache";
 import { putMessage } from "../../lib/message";
 import { v1 as v1uuid } from "uuid";
+import { EventWithMiddlewareContext } from "somod";
+import { UserProviderMiddlewareKey } from "../../lib";
 
 const builder = new RouteBuilder();
 
 builder.add(
   "$default",
-  async (message: Message<MessageInput & { wsMsgId: string }>) => {
-    const userId = message.body.from;
+  async (message: Message<MessageInput & { wsMsgId: string }>, event) => {
+    const userId = (
+      event as unknown as EventWithMiddlewareContext<Record<string, unknown>>
+    ).somodMiddlewareContext.get(UserProviderMiddlewareKey) as string;
 
     const thread = await threadCache.get(message.body.threadId);
 
@@ -38,6 +42,7 @@ builder.add(
       userId,
       {
         ...msg,
+        from: userId,
         id: v1uuid().split("-").join(""),
         sentAt: Date.now()
       }
@@ -50,7 +55,8 @@ builder.add(
         wsMsgId,
         id: messageResult.id,
         seqNo: messageResult.seqNo,
-        sentAt: messageResult.sentAt
+        sentAt: messageResult.sentAt,
+        from: messageResult.from
       })
     };
   }

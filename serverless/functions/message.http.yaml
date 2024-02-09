@@ -11,7 +11,6 @@
           - threadId
           - type
           - action
-          - from
           - message
         properties:
           threadId:
@@ -25,9 +24,6 @@
               - "new"
               - "edit"
               - "delete"
-          from:
-            type: string
-            pattern: ^[a-f0-9]{32}$
           message:
             type: string
             maxLength: 256

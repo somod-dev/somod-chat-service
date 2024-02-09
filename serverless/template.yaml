@@ -583,6 +583,7 @@ Resources:
           middlewares:
             - module: somod-websocket-extension
               resource: SomodWebSocketMiddleware
+            - resource: UserProviderMiddleware
       Layers:
         - SOMOD::Ref:
             resource: CommonLibsLayer

@@ -15,8 +15,13 @@ const dynamodb = new DynamoDBClient();
 
 const builder = new RouteBuilder();
 
-const postMessageHandler: RouteHandler<MessageInput> = async request => {
-  const userId = request.body.from;
+const postMessageHandler: RouteHandler<MessageInput> = async (
+  request,
+  event
+) => {
+  const userId = (
+    event as unknown as EventWithMiddlewareContext<Record<string, unknown>>
+  ).somodMiddlewareContext.get(UserProviderMiddlewareKey) as string;
 
   const thread = await threadCache.get(request.body.threadId);
 
@@ -44,6 +49,7 @@ const postMessageHandler: RouteHandler<MessageInput> = async request => {
     {
       ...request.body,
       id: v1uuid().split("-").join(""),
+      from: userId,
       sentAt: Date.now()
     }
   );
@@ -54,7 +60,8 @@ const postMessageHandler: RouteHandler<MessageInput> = async request => {
     body: JSON.stringify({
       id: message.id,
       seqNo: message.seqNo,
-      sentAt: message.sentAt
+      sentAt: message.sentAt,
+      from: message.from
     })
   };
 };

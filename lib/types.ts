@@ -10,12 +10,12 @@ export type MessageInput = {
   threadId: string;
   type: "text";
   action: "new" | "edit" | "delete";
-  from: string;
   message: string;
 };
 
 export type Message = {
   id: string;
+  from: string;
   seqNo: number;
   sentAt: number;
 } & MessageInput;
