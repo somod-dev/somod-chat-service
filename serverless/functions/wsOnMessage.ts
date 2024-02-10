@@ -21,7 +21,11 @@ builder.add(
       return {
         statusCode: 400,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: "Invalid threadId : does not exist" })
+        body: JSON.stringify({
+          wsMsgId: message.body.wsMsgId,
+          type: "error",
+          message: "Invalid threadId : does not exist"
+        })
       };
     }
 
@@ -30,6 +34,8 @@ builder.add(
         statusCode: 400,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          wsMsgId: message.body.wsMsgId,
+          type: "error",
           message: `Invalid threadId : from '${userId}' is not a participant in thread '${thread.id}'`
         })
       };
@@ -53,6 +59,7 @@ builder.add(
       headers: { "Content-Type": "application-json" },
       body: JSON.stringify({
         wsMsgId,
+        type: "ack",
         id: messageResult.id,
         seqNo: messageResult.seqNo,
         sentAt: messageResult.sentAt,
