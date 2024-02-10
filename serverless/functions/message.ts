@@ -89,9 +89,9 @@ const syncMessagesHandler: RouteHandler<
   if (request.parameters.query.from) {
     queryCommandInput.KeyConditionExpression += " AND #seqNo >= :seqNo";
     queryCommandInput.ExpressionAttributeNames["#seqNo"] = "seqNo";
-    queryCommandInput.ExpressionAttributeValues[":seqNo"] = convertToAttr(
-      request.parameters.query.from
-    );
+    queryCommandInput.ExpressionAttributeValues[":seqNo"] = {
+      N: request.parameters.query.from
+    };
   }
 
   const queryCommand = new QueryCommand(queryCommandInput);
