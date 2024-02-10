@@ -632,10 +632,11 @@ Resources:
                 resource: WebSocketApi
   NotifyMessageFunction:
     Type: AWS::Serverless::Function
-    SOMOD::CreateIf:
-      SOMOD::Equals:
-        - SOMOD::Parameter: chat.enable.websocket
-        - true
+    # SOMOD::CreateIf:
+    #   SOMOD::Equals:
+    #     - SOMOD::Parameter: chat.enable.websocket
+    #     - true
+    SOMOD::Access: public
     Properties:
       CodeUri:
         SOMOD::Function:
