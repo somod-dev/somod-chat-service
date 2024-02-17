@@ -56,7 +56,7 @@ builder.add(
 
     return {
       statusCode: 200,
-      headers: { "Content-Type": "application-json" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         wsMsgId,
         type: "ack",
