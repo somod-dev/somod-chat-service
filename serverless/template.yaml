@@ -10,6 +10,7 @@ Resources:
 
   ThreadTable:
     Type: AWS::DynamoDB::Table
+    SOMOD::Access: public
     SOMOD::Output:
       default: true
       attributes: [Arn]
@@ -26,6 +27,7 @@ Resources:
 
   MessageBox:
     Type: AWS::DynamoDB::Table
+    SOMOD::Access: public
     SOMOD::Output:
       default: true
       attributes: [Arn, StreamArn]
@@ -57,6 +59,7 @@ Resources:
 
   MessageStreamHandler:
     Type: AWS::Serverless::Function
+    SOMOD::Access: public
     Properties:
       FunctionName:
         SOMOD::ResourceName: MsgStrmHandler
