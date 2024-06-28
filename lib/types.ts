@@ -8,7 +8,7 @@ export type Thread = {
 
 export type MessageInput = {
   threadId: string;
-  type: "text";
+  type: "text" | "image";
   action: "new" | "edit" | "delete";
   message: string;
 };
