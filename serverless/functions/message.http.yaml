@@ -19,6 +19,7 @@
           type:
             enum:
               - "text"
+              - "image"
           action:
             enum:
               - "new"
