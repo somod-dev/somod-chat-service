@@ -18,6 +18,9 @@ Resources:
       TableName:
         SOMOD::ResourceName: Thread
       BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: 
+          SOMOD::Parameter: dynamodb.pitr.enable
       KeySchema:
         - AttributeName: id
           KeyType: HASH
@@ -35,6 +38,9 @@ Resources:
       TableName:
         SOMOD::ResourceName: MessageBox
       BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: 
+          SOMOD::Parameter: dynamodb.pitr.enable
       KeySchema:
         - AttributeName: userId
           KeyType: HASH
@@ -455,6 +461,10 @@ Resources:
       attributes:
         - Arn
     Properties:
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: 
+          SOMOD::Parameter: dynamodb.pitr.enable
       AttributeDefinitions:
         - AttributeName: "id"
           AttributeType: "S"
@@ -470,8 +480,7 @@ Resources:
               KeyType: "HASH"
           Projection:
             ProjectionType: KEYS_ONLY
-      BillingMode: PAY_PER_REQUEST
-
+ 
   OnConnectFunction:
     Type: AWS::Serverless::Function
     SOMOD::CreateIf:

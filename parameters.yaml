@@ -8,3 +8,6 @@ parameters:
   chat.enable.websocket:
     type: boolean
     default: true
+  dynamodb.pitr.enable:
+    type: boolean
+    default: false
