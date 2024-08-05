@@ -13,7 +13,6 @@ export type MessageInput = {
   message: string;
 };
 
-
 export type Message = {
   id: string;
   from: string;
