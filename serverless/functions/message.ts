@@ -43,6 +43,16 @@ const postMessageHandler: RouteHandler<MessageInput> = async (
     };
   }
 
+  if (request.body.action == "delete" && request.body.type != "control") {
+    return {
+      statusCode: 400,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: `Invalid type : type must be 'control' for 'delete' action`
+      })
+    };
+  }
+
   const message = await putMessage(
     process.env.MESSAGE_BOX_TABLE_NAME + "",
     userId,
