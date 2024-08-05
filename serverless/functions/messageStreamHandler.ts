@@ -9,6 +9,9 @@ import { PublishCommand, SNSClient } from "@aws-sdk/client-sns";
 const sns = new SNSClient();
 
 const transfer = async (message: Message) => {
+  if (message.action == "delete") {
+    return;
+  }
   const thread = await threadCache.get(message.threadId);
   if (thread) {
     const targets = thread.participants.filter(p => p != message.from);
