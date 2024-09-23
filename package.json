@@ -1,6 +1,6 @@
 {
   "name": "somod-chat-service",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Serverless Chat Service from SOMOD",
   "scripts": {
     "prettier": "npx prettier --check --ignore-unknown --no-error-on-unmatched-pattern ./**/*",
