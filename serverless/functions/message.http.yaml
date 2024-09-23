@@ -28,7 +28,7 @@
               - "delete"
           message:
             type: string
-            maxLength: 256
+            maxLength: 512
 
 /sync-messages:
   GET:
