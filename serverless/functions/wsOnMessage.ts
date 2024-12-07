@@ -5,6 +5,8 @@ import { putMessage } from "../../lib/message";
 import { v1 as v1uuid } from "uuid";
 import { EventWithMiddlewareContext } from "somod";
 import { UserProviderMiddlewareKey } from "../../lib";
+import jwt from "jsonwebtoken";
+import handleSessionToken from "./sessionUtil";
 
 const builder = new RouteBuilder();
 
@@ -14,6 +16,35 @@ builder.add(
     const userId = (
       event as unknown as EventWithMiddlewareContext<Record<string, unknown>>
     ).somodMiddlewareContext.get(UserProviderMiddlewareKey) as string;
+
+    /**
+     * session support can be enabled by setting authorizer.jwt.secret. If set,  AUTHORIZER_SECRET would be available.
+     * here we check if the user has passed a sessionToken. if passed, we validate it.
+     * TODO: this check needs to be removed once all users migrate and are using sessionToken
+     */
+    let sessionId = "";
+    if (message.body.sessionToken != null) {
+      console.log("session token passed. userId=" + userId);
+      const tokenValidationResponse = await handleSessionToken(
+        message.body.sessionToken,
+        userId
+      );
+      if (tokenValidationResponse?.error != null) {
+        return {
+          headers: { "Content-Type": "application/json; charset=utf-8" },
+          statusCode: tokenValidationResponse.statusCode,
+          body: JSON.stringify({
+            wsMsgId: message.body.wsMsgId,
+            type: "error",
+            message: tokenValidationResponse.error
+          })
+        };
+      } else {
+        sessionId = tokenValidationResponse.sessionId || "";
+      }
+    } else {
+      console.log("session token not passed. userId=" + userId);
+    }
 
     const thread = await threadCache.get(message.body.threadId);
 
@@ -41,13 +72,14 @@ builder.add(
       };
     }
 
-    const { wsMsgId, ...msg } = message.body;
+    const { wsMsgId, sessionToken, ...msg } = message.body;
 
     const messageResult = await putMessage(
       process.env.MESSAGE_BOX_TABLE_NAME + "",
       userId,
       {
         ...msg,
+        sessionId: sessionId,
         from: userId,
         id: v1uuid().split("-").join(""),
         sentAt: Date.now()

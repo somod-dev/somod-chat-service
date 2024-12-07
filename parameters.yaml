@@ -11,3 +11,5 @@ parameters:
   dynamodb.pitr.enable:
     type: boolean
     default: false
+  authorizer.jwt.secret:
+    type: string

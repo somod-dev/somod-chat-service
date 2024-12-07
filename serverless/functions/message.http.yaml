@@ -12,6 +12,7 @@
           - type
           - action
           - message
+          - sessionToken
         properties:
           threadId:
             type: string
@@ -26,9 +27,13 @@
               - "new"
               - "edit"
               - "delete"
+              - "sessionToken"
           message:
             type: string
             maxLength: 512
+          sessionToken:
+            type: string
+            maxLength: 16384
 
 /sync-messages:
   GET:

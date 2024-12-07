@@ -52,6 +52,7 @@
     "@aws-sdk/util-dynamodb": "^3.465.0",
     "somod-http-extension": "^1.2.3",
     "somod-websocket-extension": "^1.0.0",
+    "jsonwebtoken": "^9.0.2",
     "uuid": "^9.0.1"
   }
 }

@@ -10,6 +10,8 @@ import {
 } from "@aws-sdk/client-dynamodb";
 import { convertToAttr, unmarshall } from "@aws-sdk/util-dynamodb";
 import { threadCache } from "../../lib/threadCache";
+import jwt from "jsonwebtoken";
+import handleSessionToken from "./sessionUtil";
 
 const dynamodb = new DynamoDBClient();
 
@@ -43,21 +45,50 @@ const postMessageHandler: RouteHandler<MessageInput> = async (
     };
   }
 
-  if (request.body.action == "delete" && request.body.type != "control") {
+  if (
+    (request.body.action == "delete" ||
+      request.body.action == "sessionToken") &&
+    request.body.type != "control"
+  ) {
     return {
       statusCode: 400,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        message: `Invalid type : type must be 'control' for 'delete' action`
+        message: `Invalid type : type must be 'control' for ${request.body.action} action`
       })
     };
   }
 
+  let sessionId = "";
+  if (request.body.sessionToken != null) {
+    console.log("session token passed. userId=" + userId);
+    const tokenValidationResponse = await handleSessionToken(
+      request.body.sessionToken,
+      userId
+    );
+    if (tokenValidationResponse?.error != null) {
+      return {
+        headers: { "Content-Type": "application/json; charset=utf-8" },
+        statusCode: tokenValidationResponse.statusCode,
+        body: JSON.stringify({
+          type: "error",
+          message: tokenValidationResponse.error
+        })
+      };
+    } else {
+      sessionId = tokenValidationResponse.sessionId || "";
+    }
+  } else {
+    console.log("session token not passed. userId=" + userId);
+  }
+
+  const { sessionToken, ...msg } = request.body;
   const message = await putMessage(
     process.env.MESSAGE_BOX_TABLE_NAME + "",
     userId,
     {
-      ...request.body,
+      ...msg,
+      sessionId: sessionId,
       id: v1uuid().split("-").join(""),
       from: userId,
       sentAt: Date.now()
