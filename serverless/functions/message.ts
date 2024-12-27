@@ -1,6 +1,6 @@
 import { RouteBuilder, RouteHandler } from "somod-http-extension";
 import { MessageInput, UserProviderMiddlewareKey } from "../../lib";
-import { putMessage } from "../../lib/message";
+import { putMessage, validateIncomingMessage } from "../../lib/message";
 import { EventWithMiddlewareContext } from "somod";
 import { v1 as v1uuid } from "uuid";
 import {
@@ -9,9 +9,7 @@ import {
   QueryCommandInput
 } from "@aws-sdk/client-dynamodb";
 import { convertToAttr, unmarshall } from "@aws-sdk/util-dynamodb";
-import { threadCache } from "../../lib/threadCache";
-import jwt from "jsonwebtoken";
-import handleSessionToken from "./sessionUtil";
+import { handleSessionToken } from "../../lib/sessionUtil";
 
 const dynamodb = new DynamoDBClient();
 
@@ -25,73 +23,42 @@ const postMessageHandler: RouteHandler<MessageInput> = async (
     event as unknown as EventWithMiddlewareContext<Record<string, unknown>>
   ).somodMiddlewareContext.get(UserProviderMiddlewareKey) as string;
 
-  const thread = await threadCache.get(request.body.threadId);
-
-  if (thread === undefined) {
-    return {
-      statusCode: 400,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: "Invalid threadId : does not exist" })
-    };
+  const messageValidationError = await validateIncomingMessage(
+    request.body,
+    userId
+  );
+  if (messageValidationError) {
+    return messageValidationError;
   }
 
-  if (!thread.participants.includes(userId)) {
-    return {
-      statusCode: 400,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message: `Invalid threadId : from '${userId}' is not a participant in thread '${thread.id}'`
-      })
-    };
-  }
-
-  if (
-    (request.body.action == "delete" ||
-      request.body.action == "sessionToken") &&
-    request.body.type != "control"
-  ) {
+  const sessionIdResult = handleSessionToken(
+    request.body.threadId,
+    request.body.sessionToken
+  );
+  if (sessionIdResult.error) {
     return {
       statusCode: 400,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        message: `Invalid type : type must be 'control' for ${request.body.action} action`
+        message: sessionIdResult.error
       })
     };
   }
 
-  let sessionId = "";
-  if (request.body.sessionToken != null) {
-    console.log("session token passed. userId=" + userId);
-    const tokenValidationResponse = await handleSessionToken(
-      request.body.sessionToken,
-      userId
-    );
-    if (tokenValidationResponse?.error != null) {
-      return {
-        headers: { "Content-Type": "application/json; charset=utf-8" },
-        statusCode: tokenValidationResponse.statusCode,
-        body: JSON.stringify({
-          type: "error",
-          message: tokenValidationResponse.error
-        })
-      };
-    } else {
-      sessionId = tokenValidationResponse.sessionId || "";
-    }
-  } else {
-    console.log("session token not passed. userId=" + userId);
-  }
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { sessionToken, ...msg } = request.body;
   const message = await putMessage(
     process.env.MESSAGE_BOX_TABLE_NAME + "",
     userId,
     {
       ...msg,
-      sessionId: sessionId,
+      sessionId: sessionIdResult.sessionId,
       id: v1uuid().split("-").join(""),
       from: userId,
-      sentAt: Date.now()
+      sentAt: Date.now(),
+      ...(request.body.action == "sessionToken"
+        ? { sessionToken: sessionToken }
+        : {})
     }
   );
 

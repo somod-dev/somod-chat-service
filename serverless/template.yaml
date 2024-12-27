@@ -179,8 +179,10 @@ Resources:
           THREAD_TABLE_NAME:
             SOMOD::Ref:
               resource: ThreadTable
-          AUTHORIZER_SECRET:
-            SOMOD::Parameter: authorizer.jwt.secret
+          SESSION_SECRET:
+            SOMOD::Parameter: chat.session.jwt.secret
+          SESSION_FORCE:
+            SOMOD::Parameter: chat.session.force
 
       Policies:
         - Version: "2012-10-17"
@@ -609,8 +611,10 @@ Resources:
           THREAD_TABLE_NAME:
             SOMOD::Ref:
               resource: ThreadTable
-          AUTHORIZER_SECRET:
-            SOMOD::Parameter: authorizer.jwt.secret
+          SESSION_SECRET:
+            SOMOD::Parameter: chat.session.jwt.secret
+          SESSION_FORCE:
+            SOMOD::Parameter: chat.session.force
       Policies:
         - Version: "2012-10-17"
           Statement:

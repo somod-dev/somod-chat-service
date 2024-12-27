@@ -11,5 +11,8 @@ parameters:
   dynamodb.pitr.enable:
     type: boolean
     default: false
-  authorizer.jwt.secret:
+  chat.session.jwt.secret:
     type: string
+  chat.session.force:
+    type: boolean
+    default: false

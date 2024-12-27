@@ -21,3 +21,10 @@ export type Message = {
   sentAt: number;
   sessionId?: string;
 } & MessageInput;
+
+export type Session = {
+  id: string;
+  threadId: string;
+  startTime: number;
+  endTime: number;
+};
