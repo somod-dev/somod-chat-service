@@ -9,8 +9,9 @@ export type Thread = {
 export type MessageInput = {
   threadId: string;
   type: "text" | "image" | "control";
-  action: "new" | "edit" | "delete";
+  action: "new" | "edit" | "delete" | "sessionToken";
   message: string;
+  sessionToken?: string;
 };
 
 export type Message = {
@@ -18,4 +19,12 @@ export type Message = {
   from: string;
   seqNo: number;
   sentAt: number;
+  sessionId?: string;
 } & MessageInput;
+
+export type Session = {
+  id: string;
+  threadId: string;
+  startTime: number;
+  endTime: number;
+};

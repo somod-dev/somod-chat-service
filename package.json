@@ -25,6 +25,7 @@
   "license": "MIT",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.130",
+    "@types/jsonwebtoken": "^9.0.7",
     "@types/uuid": "^9.0.7",
     "decorated-ajv": "^1.1.0",
     "eslint-config-sodaru": "^1.0.1",
@@ -50,6 +51,7 @@
     "@aws-sdk/client-dynamodb": "^3.465.0",
     "@aws-sdk/client-sns": "^3.465.0",
     "@aws-sdk/util-dynamodb": "^3.465.0",
+    "jsonwebtoken": "^9.0.2",
     "somod-http-extension": "^1.2.3",
     "somod-websocket-extension": "^1.0.0",
     "uuid": "^9.0.1"

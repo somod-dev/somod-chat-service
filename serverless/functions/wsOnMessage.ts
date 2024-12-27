@@ -1,10 +1,10 @@
 import { RouteBuilder, Message } from "somod-websocket-extension";
 import { MessageInput } from "../../lib/types";
-import { threadCache } from "../../lib/threadCache";
-import { putMessage } from "../../lib/message";
+import { putMessage, validateIncomingMessage } from "../../lib/message";
 import { v1 as v1uuid } from "uuid";
 import { EventWithMiddlewareContext } from "somod";
 import { UserProviderMiddlewareKey } from "../../lib";
+import { handleSessionToken } from "../../lib/sessionUtil";
 
 const builder = new RouteBuilder();
 
@@ -15,42 +15,43 @@ builder.add(
       event as unknown as EventWithMiddlewareContext<Record<string, unknown>>
     ).somodMiddlewareContext.get(UserProviderMiddlewareKey) as string;
 
-    const thread = await threadCache.get(message.body.threadId);
+    const messageValidationError = await validateIncomingMessage(
+      message.body,
+      userId
+    );
+    if (messageValidationError) {
+      return messageValidationError;
+    }
 
-    if (thread === undefined) {
+    const sessionIdResult = handleSessionToken(
+      message.body.threadId,
+      message.body.sessionToken
+    );
+    if (sessionIdResult.error) {
       return {
         statusCode: 400,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          wsMsgId: message.body.wsMsgId,
-          type: "error",
-          message: "Invalid threadId : does not exist"
+          message: sessionIdResult.error
         })
       };
     }
 
-    if (!thread.participants.includes(userId)) {
-      return {
-        statusCode: 400,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          wsMsgId: message.body.wsMsgId,
-          type: "error",
-          message: `Invalid threadId : from '${userId}' is not a participant in thread '${thread.id}'`
-        })
-      };
-    }
-
-    const { wsMsgId, ...msg } = message.body;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { wsMsgId, sessionToken, ...msg } = message.body;
 
     const messageResult = await putMessage(
       process.env.MESSAGE_BOX_TABLE_NAME + "",
       userId,
       {
         ...msg,
+        sessionId: sessionIdResult.sessionId,
         from: userId,
         id: v1uuid().split("-").join(""),
-        sentAt: Date.now()
+        sentAt: Date.now(),
+        ...(message.body.action == "sessionToken"
+          ? { sessionToken: sessionToken }
+          : {})
       }
     );
 
