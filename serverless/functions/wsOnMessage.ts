@@ -24,7 +24,7 @@ builder.add(
     }
 
     const sessionIdResult = handleSessionToken(
-      message.body.threadId,
+      userId,
       message.body.sessionToken
     );
     if (sessionIdResult.error) {

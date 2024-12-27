@@ -31,10 +31,7 @@ const postMessageHandler: RouteHandler<MessageInput> = async (
     return messageValidationError;
   }
 
-  const sessionIdResult = handleSessionToken(
-    request.body.threadId,
-    request.body.sessionToken
-  );
+  const sessionIdResult = handleSessionToken(userId, request.body.sessionToken);
   if (sessionIdResult.error) {
     return {
       statusCode: 400,

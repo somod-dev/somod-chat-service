@@ -11,7 +11,7 @@ export const Error = {
 };
 
 export const handleSessionToken = (
-  threadId: string,
+  userId: string,
   sessionToken?: string
 ): SessionIdResult => {
   const result: SessionIdResult = { sessionId: "" };
@@ -28,7 +28,7 @@ export const handleSessionToken = (
         }) as Session;
         const now = Date.now();
         if (
-          session.threadId == threadId &&
+          session.participants.includes(userId) &&
           session.startTime <= now &&
           now <= session.endTime
         ) {
@@ -39,8 +39,8 @@ export const handleSessionToken = (
       } catch (err) {
         // eslint-disable-next-line no-console
         console.error(
-          "session token verification failed. threadId=" +
-            threadId +
+          "session token verification failed. userId=" +
+            userId +
             ", error=" +
             err
         );

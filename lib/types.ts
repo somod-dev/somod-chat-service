@@ -24,7 +24,7 @@ export type Message = {
 
 export type Session = {
   id: string;
-  threadId: string;
+  participants: string[];
   startTime: number;
   endTime: number;
 };
