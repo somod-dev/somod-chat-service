@@ -23,6 +23,7 @@ $default:
           enum:
             - "text"
             - "image"
+            - "control"
         action:
           enum:
             - "new"
