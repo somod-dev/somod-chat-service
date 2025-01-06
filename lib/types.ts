@@ -9,7 +9,13 @@ export type Thread = {
 export type MessageInput = {
   threadId: string;
   type: "text" | "image" | "control";
-  action: "new" | "edit" | "delete" | "sessionToken";
+  action:
+    | "new"
+    | "edit"
+    | "delete"
+    | "sessionStart"
+    | "sessionExtend"
+    | "sessionStart";
   message: string;
   sessionToken?: string;
 };

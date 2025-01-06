@@ -29,7 +29,9 @@ $default:
             - "new"
             - "edit"
             - "delete"
-            - "sessionToken"
+            - "sessionStart"
+            - "sessionExtend"
+            - "sessionEnd"
         message:
           type: string
           maxLength: 512

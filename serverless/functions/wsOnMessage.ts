@@ -40,6 +40,7 @@ builder.add(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { wsMsgId, sessionToken, ...msg } = message.body;
 
+    const actions = ["sessionStart", "sessionExtend", "sessionEnd"];
     const messageResult = await putMessage(
       process.env.MESSAGE_BOX_TABLE_NAME + "",
       userId,
@@ -49,7 +50,7 @@ builder.add(
         from: userId,
         id: v1uuid().split("-").join(""),
         sentAt: Date.now(),
-        ...(message.body.action == "sessionToken"
+        ...(actions.includes(message.body.action)
           ? { sessionToken: sessionToken }
           : {})
       }
