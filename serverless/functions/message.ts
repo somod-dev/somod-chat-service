@@ -44,6 +44,8 @@ const postMessageHandler: RouteHandler<MessageInput> = async (
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { sessionToken, ...msg } = request.body;
+
+  const actions = ["sessionStart", "sessionExtend", "sessionEnd"];
   const message = await putMessage(
     process.env.MESSAGE_BOX_TABLE_NAME + "",
     userId,
@@ -53,7 +55,7 @@ const postMessageHandler: RouteHandler<MessageInput> = async (
       id: v1uuid().split("-").join(""),
       from: userId,
       sentAt: Date.now(),
-      ...(request.body.action == "sessionToken"
+      ...(actions.includes(request.body.action)
         ? { sessionToken: sessionToken }
         : {})
     }
