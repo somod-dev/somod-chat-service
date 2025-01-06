@@ -15,7 +15,7 @@ export type MessageInput = {
     | "delete"
     | "sessionStart"
     | "sessionExtend"
-    | "sessionStart";
+    | "sessionEnd";
   message: string;
   sessionToken?: string;
 };
@@ -33,4 +33,10 @@ export type Session = {
   participants: string[];
   startTime: number;
   endTime: number;
+};
+
+export const typeToAllowedActionsMap = {
+  text: ["new", "edit"],
+  image: ["new", "edit"],
+  control: ["delete", "sessionStart", "sessionExtend", "sessionEnd"]
 };

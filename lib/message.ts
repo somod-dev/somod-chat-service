@@ -1,5 +1,5 @@
 import { marshall } from "@aws-sdk/util-dynamodb";
-import { Message, MessageInput } from "./types";
+import { Message, MessageInput, typeToAllowedActionsMap } from "./types";
 import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 import { threadCache } from "./threadCache";
 
@@ -40,17 +40,18 @@ export const validateIncomingMessage = async (
   let errorMessage: string | undefined = undefined;
   const thread = await threadCache.get(message.threadId);
 
+  const sessionActions = ["sessionStart", "sessionExtend", "sessionEnd"];
+
   if (thread === undefined) {
     errorMessage = "Invalid threadId : does not exist";
   } else if (!thread.participants.includes(userId)) {
     errorMessage = `Invalid threadId : from '${userId}' is not a participant in thread '${thread.id}'`;
-  } else if (
-    (message.action == "delete" || message.action == "sessionToken") &&
-    message.type != "control"
-  ) {
-    errorMessage = `Invalid type : type must be 'control' for ${message.action} action`;
-  } else if (message.action == "sessionToken" && !message.sessionToken) {
-    errorMessage = `Required 'sessionToken' field when action is 'sessionToken'`;
+  } else if (!typeToAllowedActionsMap[message.type].includes(message.action)) {
+    errorMessage = `Invalid action : action must be '${typeToAllowedActionsMap[
+      message.type
+    ].join(",")}' for '${message.type}' type`;
+  } else if (sessionActions.includes(message.action) && !message.sessionToken) {
+    errorMessage = `Required 'sessionToken' field when action is '${message.action}'`;
   }
   if (errorMessage) {
     return {
