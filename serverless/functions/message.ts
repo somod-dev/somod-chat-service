@@ -35,7 +35,7 @@ const postMessageHandler: RouteHandler<MessageInput> = async (
   if (sessionIdResult.error) {
     return {
       statusCode: 400,
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json; charset=utf-8" },
       body: JSON.stringify({
         message: sessionIdResult.error
       })
@@ -63,7 +63,7 @@ const postMessageHandler: RouteHandler<MessageInput> = async (
 
   return {
     statusCode: 200,
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json; charset=utf-8" },
     body: JSON.stringify({
       id: message.id,
       seqNo: message.seqNo,
@@ -112,7 +112,7 @@ const syncMessagesHandler: RouteHandler<
   return {
     statusCode: 200,
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json; charset=utf-8"
     },
     body: JSON.stringify(messages)
   };

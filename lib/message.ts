@@ -56,7 +56,7 @@ export const validateIncomingMessage = async (
   if (errorMessage) {
     return {
       statusCode: 400,
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json; charset=utf-8" },
       body: JSON.stringify({
         message: errorMessage
       })

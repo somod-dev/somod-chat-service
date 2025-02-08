@@ -27,7 +27,7 @@ const createThread: RouteHandler<ThreadInput> = async request => {
 
   return {
     statusCode: 200,
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json; charset=utf-8" },
     body: JSON.stringify(thread)
   };
 };
@@ -43,7 +43,7 @@ const getThread: RouteHandler<null, { id: string }> = async request => {
   return result.Item
     ? {
         statusCode: 200,
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json; charset=utf-8" },
         body: JSON.stringify(unmarshall(result.Item))
       }
     : { statusCode: 404 };
