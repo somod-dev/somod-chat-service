@@ -30,7 +30,7 @@ builder.add(
     if (sessionIdResult.error) {
       return {
         statusCode: 400,
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json; charset=utf-8" },
         body: JSON.stringify({
           message: sessionIdResult.error
         })
@@ -58,7 +58,7 @@ builder.add(
 
     return {
       statusCode: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json; charset=utf-8" },
       body: JSON.stringify({
         wsMsgId,
         type: "ack",

@@ -33,7 +33,7 @@ const userProviderMiddleware: Middleware<
   if (key === undefined) {
     return {
       statusCode: 400,
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json; charset=utf-8" },
       body: JSON.stringify({
         message: `Expected ${UserProviderMiddlewareKey} in the request headers or message body`
       })
