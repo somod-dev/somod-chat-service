@@ -2,18 +2,15 @@ import { RouteBuilder, Message } from "somod-websocket-extension";
 import { MessageInput } from "../../lib/types";
 import { putMessage, validateIncomingMessage } from "../../lib/message";
 import { v1 as v1uuid } from "uuid";
-import { EventWithMiddlewareContext } from "somod";
-import { UserProviderMiddlewareKey } from "../../lib";
 import { handleSessionToken } from "../../lib/sessionUtil";
+import { getUserIdFromEvent } from "../../lib/getUserIdFromEvent";
 
 const builder = new RouteBuilder();
 
 builder.add(
   "$default",
   async (message: Message<MessageInput & { wsMsgId: string }>, event) => {
-    const userId = (
-      event as unknown as EventWithMiddlewareContext<Record<string, unknown>>
-    ).somodMiddlewareContext.get(UserProviderMiddlewareKey) as string;
+    const userId = getUserIdFromEvent(event);
 
     const messageValidationError = await validateIncomingMessage(
       message.body,
@@ -23,8 +20,9 @@ builder.add(
       return messageValidationError;
     }
 
-    const sessionIdResult = handleSessionToken(
+    const sessionIdResult = await handleSessionToken(
       userId,
+      message.body.threadId,
       message.body.sessionToken
     );
     if (sessionIdResult.error) {

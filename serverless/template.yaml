@@ -241,6 +241,9 @@ Resources:
           THREAD_TABLE_NAME:
             SOMOD::Ref:
               resource: ThreadTable
+          MESSAGE_BOX_TABLE_NAME:
+            SOMOD::Ref:
+              resource: MessageBox
       Policies:
         - Version: "2012-10-17"
           Statement:
@@ -252,6 +255,13 @@ Resources:
               Action:
                 - "dynamodb:PutItem"
                 - "dynamodb:GetItem"
+            - Effect: Allow
+              Resource:
+                - SOMOD::Ref:
+                    resource: MessageBox
+                    attribute: Arn
+              Action:
+                - "dynamodb:PutItem"
       Events:
         CreateThread:
           Type: HttpApi
@@ -269,6 +279,14 @@ Resources:
                 resource: ChatApi
             Method: GET
             Path: /thread/{id}
+        UpdateSessionRequireInThread:
+          Type: HttpApi
+          Properties:
+            ApiId:
+              SOMOD::Ref:
+                resource: ChatApi
+            Method: POST
+            Path: /thread/{id}/session
 
   MessageNotificationTopic:
     Type: AWS::SNS::Topic

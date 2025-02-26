@@ -27,3 +27,27 @@
           type: string
           pattern: ^[a-f0-9]{32}$
         required: true
+
+/thread/{id}/session:
+  POST:
+    parameters:
+      - name: id
+        in: path
+        schema:
+          type: string
+          pattern: ^[a-f0-9]{32}$
+        required: true
+    body:
+      parser: json
+      schema:
+        type: object
+        required:
+          - sessionRequired
+        properties:
+          sessionRequired:
+            type: array
+            items:
+              type: string
+              pattern: ^[a-zA-Z0-9-_]{1,50}$
+            minItems: 2
+            maxItems: 2

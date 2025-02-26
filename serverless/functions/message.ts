@@ -10,6 +10,7 @@ import {
 } from "@aws-sdk/client-dynamodb";
 import { convertToAttr, unmarshall } from "@aws-sdk/util-dynamodb";
 import { handleSessionToken } from "../../lib/sessionUtil";
+import { getUserIdFromEvent } from "../../lib/getUserIdFromEvent";
 
 const dynamodb = new DynamoDBClient();
 
@@ -31,7 +32,11 @@ const postMessageHandler: RouteHandler<MessageInput> = async (
     return messageValidationError;
   }
 
-  const sessionIdResult = handleSessionToken(userId, request.body.sessionToken);
+  const sessionIdResult = await handleSessionToken(
+    userId,
+    request.body.threadId,
+    request.body.sessionToken
+  );
   if (sessionIdResult.error) {
     return {
       statusCode: 400,
@@ -78,9 +83,7 @@ const syncMessagesHandler: RouteHandler<
   Record<string, unknown>,
   { from?: string }
 > = async (request, event) => {
-  const userId = (
-    event as unknown as EventWithMiddlewareContext<Record<string, unknown>>
-  ).somodMiddlewareContext.get(UserProviderMiddlewareKey) as string;
+  const userId = getUserIdFromEvent(event);
 
   const queryCommandInput = {
     TableName: process.env.MESSAGE_BOX_TABLE_NAME + "",

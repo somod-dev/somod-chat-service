@@ -1,5 +1,6 @@
 import { verify } from "jsonwebtoken";
 import { Session } from "./types";
+import { threadCache } from "./threadCache";
 
 const sessionJwtSecret = process.env.SESSION_SECRET ?? "";
 const sessionForce = process.env.SESSION_FORCE ?? "";
@@ -10,15 +11,21 @@ export const Error = {
   invalid: "invalid field: sessionToken"
 };
 
-export const handleSessionToken = (
+export const handleSessionToken = async (
   userId: string,
+  threadId: string,
   sessionToken?: string
-): SessionIdResult => {
+): Promise<SessionIdResult> => {
   const result: SessionIdResult = { sessionId: "" };
   if (sessionJwtSecret) {
     if (!sessionToken) {
       if (sessionForce == "true") {
         result.error = Error.required;
+      } else {
+        const thread = await threadCache.get(threadId, 5000);
+        if (thread?.sessionRequired?.includes(userId)) {
+          result.error = Error.required;
+        }
       }
     } else {
       try {
