@@ -233,6 +233,7 @@ Resources:
           middlewares:
             - module: somod-http-extension
               resource: SomodHttpMiddleware
+            - resource: UserProviderMiddleware
       Layers:
         - SOMOD::Ref:
             resource: CommonLibsLayer
