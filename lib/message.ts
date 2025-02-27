@@ -58,7 +58,8 @@ export const validateIncomingMessage = async (
       statusCode: 400,
       headers: { "Content-Type": "application/json; charset=utf-8" },
       body: JSON.stringify({
-        message: errorMessage
+        message: errorMessage,
+        threadId: message.threadId
       })
     };
   }

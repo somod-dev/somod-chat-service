@@ -30,7 +30,8 @@ builder.add(
         statusCode: 400,
         headers: { "Content-Type": "application/json; charset=utf-8" },
         body: JSON.stringify({
-          message: sessionIdResult.error
+          message: sessionIdResult.error,
+          threadId: message.body.threadId
         })
       };
     }
