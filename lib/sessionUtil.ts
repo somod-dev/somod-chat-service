@@ -22,7 +22,7 @@ export const handleSessionToken = async (
       if (sessionForce == "true") {
         result.error = Error.required;
       } else {
-        const thread = await threadCache.get(threadId, 5000);
+        const thread = await threadCache.get(threadId, -1); // ttl = -1 will force the cache to fetch from db
         if (thread?.sessionRequired?.includes(userId)) {
           result.error = Error.required;
         }
