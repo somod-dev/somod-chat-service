@@ -24,6 +24,7 @@ $default:
             - "text"
             - "image"
             - "control"
+            - "call"
         action:
           enum:
             - "new"
@@ -32,6 +33,10 @@ $default:
             - "sessionStart"
             - "sessionExtend"
             - "sessionEnd"
+            - "initiated"
+            - "connected"
+            - "disconnected"
+            - "ended"
         message:
           type: string
           maxLength: 512
