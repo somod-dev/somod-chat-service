@@ -53,10 +53,7 @@ export const typeToAllowedActionsMap = {
     "sessionStart",
     "sessionExtend",
     "sessionEnd",
-    "sessionRequirementChange",
-    "initiated",
-    "connected",
-    "disconnected",
-    "ended"
-  ]
+    "sessionRequirementChange"
+  ],
+  call: ["initiated", "connected", "disconnected", "ended"]
 };
