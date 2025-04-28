@@ -13,7 +13,7 @@ export type Thread = {
 
 export type MessageInput = {
   threadId: string;
-  type: "text" | "image" | "control" | "call";
+  type: "text" | "image" | "control";
   action:
     | "new"
     | "edit"
@@ -22,10 +22,10 @@ export type MessageInput = {
     | "sessionExtend"
     | "sessionEnd"
     | "sessionRequirementChange"
-    | "initiated"
-    | "connected"
-    | "disconnected"
-    | "ended";
+    | "call-initiated"
+    | "call-connected"
+    | "call-disconnected"
+    | "call-ended";
   message: string;
   sessionToken?: string;
 };
@@ -53,7 +53,10 @@ export const typeToAllowedActionsMap = {
     "sessionStart",
     "sessionExtend",
     "sessionEnd",
-    "sessionRequirementChange"
-  ],
-  call: ["initiated", "connected", "disconnected", "ended"]
+    "sessionRequirementChange",
+    "call-initiated",
+    "call-connected",
+    "call-disconnected",
+    "call-ended"
+  ]
 };

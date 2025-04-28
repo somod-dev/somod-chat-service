@@ -21,7 +21,6 @@
               - "text"
               - "image"
               - "control"
-              - "call"
           action:
             enum:
               - "new"
@@ -30,10 +29,10 @@
               - "sessionStart"
               - "sessionExtend"
               - "sessionEnd"
-              - "initiated"
-              - "connected"
-              - "disconnected"
-              - "ended"
+              - "call-initiated"
+              - "call-connected"
+              - "call-disconnected"
+              - "call-ended"
           message:
             type: string
             maxLength: 512
