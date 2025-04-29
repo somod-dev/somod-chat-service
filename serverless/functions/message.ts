@@ -35,6 +35,8 @@ const postMessageHandler: RouteHandler<MessageInput> = async (
   const sessionIdResult = await handleSessionToken(
     userId,
     request.body.threadId,
+    request.body.type,
+    request.body.action,
     request.body.sessionToken
   );
   if (sessionIdResult.error) {
