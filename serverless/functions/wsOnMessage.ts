@@ -23,6 +23,8 @@ builder.add(
     const sessionIdResult = await handleSessionToken(
       userId,
       message.body.threadId,
+      message.body.type,
+      message.body.action,
       message.body.sessionToken
     );
     if (sessionIdResult.error) {
