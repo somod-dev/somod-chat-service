@@ -14,12 +14,16 @@ export const Error = {
 export const handleSessionToken = async (
   userId: string,
   threadId: string,
+  type: string,
+  action: string,
   sessionToken?: string
 ): Promise<SessionIdResult> => {
   const result: SessionIdResult = { sessionId: "" };
   if (sessionJwtSecret) {
     if (!sessionToken) {
-      if (sessionForce == "true") {
+      if (type === "call") {
+        //do nothing
+      } else if (sessionForce == "true") {
         result.error = Error.required;
       } else {
         const thread = await threadCache.get(threadId, -1); // ttl = -1 will force the cache to fetch from db
