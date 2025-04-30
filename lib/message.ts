@@ -40,8 +40,6 @@ export const validateIncomingMessage = async (
   let errorMessage: string | undefined = undefined;
   const thread = await threadCache.get(message.threadId);
 
-  const sessionActions = ["sessionStart", "sessionExtend", "sessionEnd"];
-
   if (thread === undefined) {
     errorMessage = "Invalid threadId : does not exist";
   } else if (!thread.participants.includes(userId)) {
@@ -50,8 +48,6 @@ export const validateIncomingMessage = async (
     errorMessage = `Invalid action : action must be '${typeToAllowedActionsMap[
       message.type
     ].join(",")}' for '${message.type}' type`;
-  } else if (sessionActions.includes(message.action) && !message.sessionToken) {
-    errorMessage = `Required 'sessionToken' field when action is '${message.action}'`;
   }
   if (errorMessage) {
     return {

@@ -1,5 +1,5 @@
 import { verify } from "jsonwebtoken";
-import { Session } from "./types";
+import { Session, sessionRequirement } from "./types";
 import { threadCache } from "./threadCache";
 
 const sessionJwtSecret = process.env.SESSION_SECRET ?? "";
@@ -21,14 +21,20 @@ export const handleSessionToken = async (
   const result: SessionIdResult = { sessionId: "" };
   if (sessionJwtSecret) {
     if (!sessionToken) {
-      if (type === "call") {
-        //do nothing
-      } else if (sessionForce == "true") {
-        result.error = Error.required;
-      } else {
-        const thread = await threadCache.get(threadId, -1); // ttl = -1 will force the cache to fetch from db
-        if (thread?.sessionRequired?.includes(userId)) {
+      const isSessionRequiredForThisTypeAction =
+        sessionRequirement[type]?.[action];
+      if (isSessionRequiredForThisTypeAction !== undefined) {
+        if (isSessionRequiredForThisTypeAction === "always") {
           result.error = Error.required;
+        } else if (isSessionRequiredForThisTypeAction === "thread") {
+          if (sessionForce == "true") {
+            result.error = Error.required;
+          } else {
+            const thread = await threadCache.get(threadId, -1); // ttl = -1 will force the cache to fetch from db
+            if (thread?.sessionRequired?.includes(userId)) {
+              result.error = Error.required;
+            }
+          }
         }
       }
     } else {

@@ -57,3 +57,19 @@ export const typeToAllowedActionsMap = {
   ],
   call: ["initiated", "connected", "disconnected", "ended"]
 };
+
+/**
+ * Store the message type and actions for which the session token is required
+ */
+export const sessionRequirement: Record<
+  string,
+  Record<string, undefined | "thread" | "always">
+> = {
+  text: { new: "thread", edit: "thread" },
+  image: { new: "thread", edit: "thread" },
+  control: {
+    sessionStart: "always",
+    sessionExtend: "always",
+    sessionEnd: "always"
+  }
+};
