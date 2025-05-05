@@ -25,7 +25,8 @@ export type MessageInput = {
     | "initiated"
     | "connected"
     | "disconnected"
-    | "ended";
+    | "ended"
+    | "pooja";
   message: string;
   sessionToken?: string;
 };
