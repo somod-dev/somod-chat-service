@@ -13,7 +13,7 @@ export type Thread = {
 
 export type MessageInput = {
   threadId: string;
-  type: "text" | "image" | "control" | "call";
+  type: "text" | "image" | "control" | "call" | "pooja";
   action:
     | "new"
     | "edit"
@@ -55,7 +55,8 @@ export const typeToAllowedActionsMap = {
     "sessionEnd",
     "sessionRequirementChange"
   ],
-  call: ["initiated", "connected", "disconnected", "ended"]
+  call: ["initiated", "connected", "disconnected", "ended"],
+  pooja: ["new", "edit"]
 };
 
 /**
