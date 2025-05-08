@@ -23,9 +23,7 @@ export type MessageInput = {
     | "sessionEnd"
     | "sessionRequirementChange"
     | "initiated"
-    | "connected"
-    | "disconnected"
-    | "ended";
+    | "declined";
   message: string;
   sessionToken?: string;
 };
@@ -55,5 +53,5 @@ export const typeToAllowedActionsMap = {
     "sessionEnd",
     "sessionRequirementChange"
   ],
-  call: ["initiated", "connected", "disconnected", "ended"]
+  call: ["initiated", "declined"]
 };
