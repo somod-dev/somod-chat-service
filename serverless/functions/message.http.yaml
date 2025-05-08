@@ -31,9 +31,7 @@
               - "sessionExtend"
               - "sessionEnd"
               - "initiated"
-              - "connected"
-              - "disconnected"
-              - "ended"
+              - "declined"
           message:
             type: string
             maxLength: 512
