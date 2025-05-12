@@ -41,12 +41,12 @@ export const handleSessionToken = async (
             const sessionRequired = Object.fromEntries(
               thread?.sessionRequired?.map((userId, index) => [
                 userId,
-                thread?.sessionRequiredTill?.[index]
+                thread?.sessionRequiredTill?.[index] ?? oneDay
               ]) ?? []
             );
             if (
               sessionRequired[userId] !== undefined &&
-              sessionRequired[userId] < Date.now()
+              Date.now() < sessionRequired[userId]
             ) {
               result.error = Error.required;
               result.sessionRequiredTill = sessionRequired[userId];
