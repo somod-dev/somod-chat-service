@@ -4,7 +4,11 @@ import { threadCache } from "./threadCache";
 
 const sessionJwtSecret = process.env.SESSION_SECRET ?? "";
 const sessionForce = process.env.SESSION_FORCE ?? "";
-type SessionIdResult = { sessionId: string; error?: string };
+type SessionIdResult = {
+  sessionId: string;
+  error?: string;
+  sessionRequiredTill?: number;
+};
 
 export const Error = {
   required: "missing required field: sessionToken",
@@ -24,15 +28,28 @@ export const handleSessionToken = async (
       const isSessionRequiredForThisTypeAction =
         sessionRequirement[type]?.[action];
       if (isSessionRequiredForThisTypeAction !== undefined) {
+        const oneDay = Date.now() + 1000 * 60 * 60 * 24; // 1 day
         if (isSessionRequiredForThisTypeAction === "always") {
           result.error = Error.required;
+          result.sessionRequiredTill = oneDay;
         } else if (isSessionRequiredForThisTypeAction === "thread") {
           if (sessionForce == "true") {
             result.error = Error.required;
+            result.sessionRequiredTill = oneDay;
           } else {
             const thread = await threadCache.get(threadId, -1); // ttl = -1 will force the cache to fetch from db
-            if (thread?.sessionRequired?.includes(userId)) {
+            const sessionRequired = Object.fromEntries(
+              thread?.sessionRequired?.map((userId, index) => [
+                userId,
+                thread?.sessionRequiredTill?.[index]
+              ]) ?? []
+            );
+            if (
+              sessionRequired[userId] !== undefined &&
+              sessionRequired[userId] < Date.now()
+            ) {
               result.error = Error.required;
+              result.sessionRequiredTill = sessionRequired[userId];
             }
           }
         }

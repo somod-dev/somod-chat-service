@@ -1,15 +1,13 @@
-import { RouteBuilder, RouteHandler } from "somod-http-extension";
 import {
   DynamoDBClient,
   GetItemCommand,
   PutItemCommand,
   UpdateItemCommand
 } from "@aws-sdk/client-dynamodb";
-import { Thread, ThreadInput, ThreadSessionRequired } from "../../lib";
 import { convertToAttr, marshall, unmarshall } from "@aws-sdk/util-dynamodb";
-import { v1, v1 as v1uuid } from "uuid";
-import { putMessage } from "../../lib/message";
-import { getUserIdFromEvent } from "../../lib/getUserIdFromEvent";
+import { RouteBuilder, RouteHandler } from "somod-http-extension";
+import { v1 as v1uuid } from "uuid";
+import { Thread, ThreadInput, ThreadSessionRequired } from "../../lib";
 
 const builder = new RouteBuilder();
 
@@ -55,37 +53,23 @@ const getThread: RouteHandler<null, { id: string }> = async request => {
 const updateSessionRequired: RouteHandler<
   Required<ThreadSessionRequired>,
   { id: string }
-> = async (request, event) => {
-  const userId = getUserIdFromEvent(event);
-
+> = async request => {
   const updateItemCommand = new UpdateItemCommand({
     TableName: process.env.THREAD_TABLE_NAME + "",
     Key: marshall({ id: request.parameters.path.id }),
-    UpdateExpression: "SET #sessionRequired = :sessionRequired",
+    UpdateExpression:
+      "SET #sessionRequired = :sessionRequired, #sessionRequiredTill = :sessionRequiredTill",
     ExpressionAttributeNames: {
-      "#sessionRequired": "sessionRequired"
+      "#sessionRequired": "sessionRequired",
+      "#sessionRequiredTill": "sessionRequiredTill"
     },
     ExpressionAttributeValues: {
-      ":sessionRequired": convertToAttr(request.body.sessionRequired)
+      ":sessionRequired": convertToAttr(request.body.sessionRequired),
+      ":sessionRequiredTill": convertToAttr(request.body.sessionRequiredTill)
     }
   });
 
   await dynamodb.send(updateItemCommand);
-
-  try {
-    await putMessage(process.env.MESSAGE_BOX_TABLE_NAME ?? "", userId, {
-      id: v1().split("-").join(""),
-      type: "control",
-      action: "sessionRequirementChange",
-      from: userId,
-      message: JSON.stringify(request.body.sessionRequired),
-      sentAt: Date.now(),
-      threadId: request.parameters.path.id
-    });
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error(e);
-  }
 
   return {
     statusCode: 200,

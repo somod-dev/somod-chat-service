@@ -1,9 +1,10 @@
 export type ThreadInput = {
   participants: string[];
-};
+} & ThreadSessionRequired;
 
 export type ThreadSessionRequired = {
   sessionRequired?: string[];
+  sessionRequiredTill?: number[];
 };
 
 export type Thread = {
@@ -21,7 +22,6 @@ export type MessageInput = {
     | "sessionStart"
     | "sessionExtend"
     | "sessionEnd"
-    | "sessionRequirementChange"
     | "initiated"
     | "declined";
   message: string;
@@ -46,13 +46,7 @@ export type Session = {
 export const typeToAllowedActionsMap = {
   text: ["new", "edit"],
   image: ["new", "edit"],
-  control: [
-    "delete",
-    "sessionStart",
-    "sessionExtend",
-    "sessionEnd",
-    "sessionRequirementChange"
-  ],
+  control: ["delete", "sessionStart", "sessionExtend", "sessionEnd"],
   call: ["initiated", "declined"],
   pooja: ["new", "edit"]
 };

@@ -14,8 +14,21 @@
             type: array
             items:
               type: string
-              pattern: ^[a-zA-Z0-9-_]{1,50}$
+              pattern: ^[a-f0-9]{32}$
             minItems: 2
+            maxItems: 2
+          sessionRequired:
+            type: array
+            items:
+              type: string
+              pattern: ^[a-f0-9]{32}$
+            minItems: 0
+            maxItems: 2
+          sessionRequiredTill:
+            type: array
+            items:
+              type: number
+            minItems: 0
             maxItems: 2
 
 /thread/{id}:
@@ -43,11 +56,18 @@
         type: object
         required:
           - sessionRequired
+          - sessionRequiredTill
         properties:
           sessionRequired:
             type: array
             items:
               type: string
-              pattern: ^[a-zA-Z0-9-_]{1,50}$
+              pattern: ^[a-f0-9]{32}$
+            minItems: 0
+            maxItems: 2
+          sessionRequiredTill:
+            type: array
+            items:
+              type: number
             minItems: 0
             maxItems: 2

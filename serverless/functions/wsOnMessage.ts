@@ -33,7 +33,8 @@ builder.add(
         headers: { "Content-Type": "application/json; charset=utf-8" },
         body: JSON.stringify({
           message: sessionIdResult.error,
-          threadId: message.body.threadId
+          threadId: message.body.threadId,
+          sessionRequiredTill: sessionIdResult.sessionRequiredTill
         })
       };
     }

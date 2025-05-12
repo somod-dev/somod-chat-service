@@ -45,7 +45,8 @@ const postMessageHandler: RouteHandler<MessageInput> = async (
       headers: { "Content-Type": "application/json; charset=utf-8" },
       body: JSON.stringify({
         message: sessionIdResult.error,
-        threadId: request.body.threadId
+        threadId: request.body.threadId,
+        sessionRequiredTill: sessionIdResult.sessionRequiredTill
       })
     };
   }
