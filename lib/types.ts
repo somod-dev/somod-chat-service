@@ -22,6 +22,7 @@ export type MessageInput = {
     | "sessionStart"
     | "sessionExtend"
     | "sessionEnd"
+    | "sessionRequirementChange"
     | "initiated"
     | "declined";
   message: string;
@@ -46,7 +47,13 @@ export type Session = {
 export const typeToAllowedActionsMap = {
   text: ["new", "edit"],
   image: ["new", "edit"],
-  control: ["delete", "sessionStart", "sessionExtend", "sessionEnd"],
+  control: [
+    "delete",
+    "sessionStart",
+    "sessionExtend",
+    "sessionEnd",
+    "sessionRequirementChange"
+  ],
   call: ["initiated", "declined"],
   pooja: ["new", "edit"]
 };
