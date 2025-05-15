@@ -9,6 +9,7 @@ export type ThreadSessionRequired = {
 
 export type Thread = {
   id: string;
+  createdAt?: number;
 } & ThreadInput &
   ThreadSessionRequired;
 

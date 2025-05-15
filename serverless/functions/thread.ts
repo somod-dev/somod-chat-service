@@ -14,7 +14,13 @@ const builder = new RouteBuilder();
 const dynamodb = new DynamoDBClient();
 
 const createThread: RouteHandler<ThreadInput> = async request => {
-  const thread: Thread = { ...request.body, id: v1uuid().split("-").join("") };
+  const now = Date.now();
+  const thread: Thread = {
+    ...request.body,
+    id: v1uuid().split("-").join(""),
+    createdAt: now
+  };
+
   const putItemCommand = new PutItemCommand({
     TableName: process.env.THREAD_TABLE_NAME + "",
     Item: marshall(thread),
