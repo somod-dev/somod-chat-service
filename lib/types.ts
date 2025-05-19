@@ -1,5 +1,6 @@
 export type ThreadInput = {
   participants: string[];
+  serviceId?: string;
 } & ThreadSessionRequired;
 
 export type ThreadSessionRequired = {
