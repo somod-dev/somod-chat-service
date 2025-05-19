@@ -17,6 +17,8 @@
               pattern: ^[a-f0-9]{32}$
             minItems: 2
             maxItems: 2
+          serviceId:
+            type: string
           sessionRequired:
             type: array
             items:
