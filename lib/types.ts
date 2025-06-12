@@ -15,7 +15,7 @@ export type Thread = {
 
 export type MessageInput = {
   threadId: string;
-  type: "text" | "image" | "control" | "call" | "pooja";
+  type: "text" | "image" | "control" | "call" | "pooja" | "donation";
   action:
     | "new"
     | "edit"
