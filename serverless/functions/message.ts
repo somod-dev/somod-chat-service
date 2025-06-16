@@ -97,7 +97,8 @@ const syncMessagesHandler: RouteHandler<
     },
     ExpressionAttributeValues: {
       ":userId": convertToAttr(userId)
-    }
+    },
+    Limit: 100
   } satisfies QueryCommandInput;
 
   if (request.parameters.query.from) {
