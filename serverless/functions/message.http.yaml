@@ -22,6 +22,8 @@
               - "image"
               - "control"
               - "call"
+              - "pooja"
+              - "donation"
           action:
             enum:
               - "new"

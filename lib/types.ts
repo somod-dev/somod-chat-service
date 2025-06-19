@@ -15,7 +15,7 @@ export type Thread = {
 
 export type MessageInput = {
   threadId: string;
-  type: "text" | "image" | "control" | "call" | "pooja";
+  type: "text" | "image" | "control" | "call" | "pooja" | "donation";
   action:
     | "new"
     | "edit"
@@ -56,7 +56,8 @@ export const typeToAllowedActionsMap = {
     "sessionRequirementChange"
   ],
   call: ["initiated", "declined"],
-  pooja: ["new", "edit"]
+  pooja: ["new", "edit"],
+  donation: ["new", "edit"]
 };
 
 /**
