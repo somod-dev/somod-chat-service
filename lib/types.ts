@@ -56,7 +56,8 @@ export const typeToAllowedActionsMap = {
     "sessionRequirementChange"
   ],
   call: ["initiated", "declined"],
-  pooja: ["new", "edit"]
+  pooja: ["new", "edit"],
+  donation: ["new", "edit"]
 };
 
 /**
