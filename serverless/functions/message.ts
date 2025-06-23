@@ -105,7 +105,9 @@ const syncMessagesHandler: RouteHandler<
     queryCommandInput.KeyConditionExpression += " AND #seqNo >= :seqNo";
     queryCommandInput.ExpressionAttributeNames["#seqNo"] = "seqNo";
     queryCommandInput.ExpressionAttributeValues[":seqNo"] = {
-      N: request.parameters.query.from
+      // N: request.parameters.query.from
+      // TODO: temp hack. remove once all users sync all messages after this date. (can remove by end of June)
+      N: 1750419000000 + "" // friday, 20 June 2025 5 PM IST
     };
   }
 
