@@ -142,18 +142,6 @@ Resources:
         SOMOD::FunctionMiddleware:
           name: userProvider
 
-  CommonLibsLayer:
-    Type: AWS::Serverless::LayerVersion
-    SOMOD::Output:
-      default: true
-    Properties:
-      RetentionPolicy: Delete
-      ContentUri:
-        SOMOD::FunctionLayer:
-          name: commonlibs
-          libraries:
-            - decorated-ajv
-
   Message:
     Type: AWS::Serverless::Function
     SOMOD::Access: public
@@ -168,9 +156,6 @@ Resources:
             - module: somod-http-extension
               resource: SomodHttpMiddleware
             - resource: UserProviderMiddleware
-      Layers:
-        - SOMOD::Ref:
-            resource: CommonLibsLayer
       Environment:
         Variables:
           MESSAGE_BOX_TABLE_NAME:
@@ -234,9 +219,6 @@ Resources:
             - module: somod-http-extension
               resource: SomodHttpMiddleware
             - resource: UserProviderMiddleware
-      Layers:
-        - SOMOD::Ref:
-            resource: CommonLibsLayer
       Environment:
         Variables:
           THREAD_TABLE_NAME:
@@ -620,9 +602,6 @@ Resources:
             - module: somod-websocket-extension
               resource: SomodWebSocketMiddleware
             - resource: UserProviderMiddleware
-      Layers:
-        - SOMOD::Ref:
-            resource: CommonLibsLayer
       Environment:
         Variables:
           MESSAGE_BOX_TABLE_NAME:

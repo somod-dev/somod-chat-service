@@ -30,8 +30,8 @@
     "decorated-ajv": "^1.1.0",
     "eslint-config-sodaru": "^1.0.1",
     "prettier-config-sodaru": "^1.0.0",
-    "somod": "^1.17.3",
-    "somod-middleware": "^1.17.3"
+    "somod": "^2.1.1",
+    "somod-middleware": "^2.1.1"
   },
   "module": "build/lib/index.js",
   "typings": "build/lib/index.d.ts",
@@ -39,7 +39,7 @@
     "build"
   ],
   "sideEffects": false,
-  "somod": "1.17.3",
+  "somod": "2.1.1",
   "eslintConfig": {
     "extends": [
       "sodaru"
@@ -52,8 +52,8 @@
     "@aws-sdk/client-sns": "^3.465.0",
     "@aws-sdk/util-dynamodb": "^3.465.0",
     "jsonwebtoken": "^9.0.2",
-    "somod-http-extension": "^1.2.3",
-    "somod-websocket-extension": "^1.0.0",
+    "somod-http-extension": "^2.0.2",
+    "somod-websocket-extension": "^2.0.2",
     "uuid": "^9.0.1"
   }
 }
