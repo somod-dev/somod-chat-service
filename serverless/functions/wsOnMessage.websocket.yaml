@@ -24,7 +24,8 @@ $default:
             - "text"
             - "image"
             - "control"
-            - "call"
+            - "audio-call"
+            - "video-call"
             - "pooja"
             - "donation"
         action:
