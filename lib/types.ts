@@ -15,7 +15,14 @@ export type Thread = {
 
 export type MessageInput = {
   threadId: string;
-  type: "text" | "image" | "control" | "call" | "pooja" | "donation";
+  type:
+    | "text"
+    | "image"
+    | "control"
+    | "audio-call"
+    | "video-call"
+    | "pooja"
+    | "donation";
   action:
     | "new"
     | "edit"
@@ -24,8 +31,9 @@ export type MessageInput = {
     | "sessionExtend"
     | "sessionEnd"
     | "sessionRequirementChange"
-    | "initiated"
-    | "declined";
+    | "callStart"
+    | "callConnect"
+    | "callEnd";
   message: string;
   sessionToken?: string;
 };
@@ -55,7 +63,8 @@ export const typeToAllowedActionsMap = {
     "sessionEnd",
     "sessionRequirementChange"
   ],
-  call: ["initiated", "declined"],
+  "audio-call": ["callStart", "callConnect", "callEnd"],
+  "video-call": ["callStart", "callConnect", "callEnd"],
   pooja: ["new", "edit"],
   donation: ["new", "edit"]
 };

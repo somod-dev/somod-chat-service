@@ -24,7 +24,8 @@ $default:
             - "text"
             - "image"
             - "control"
-            - "call"
+            - "audio-call"
+            - "video-call"
             - "pooja"
             - "donation"
         action:
@@ -35,8 +36,9 @@ $default:
             - "sessionStart"
             - "sessionExtend"
             - "sessionEnd"
-            - "initiated"
-            - "declined"
+            - "callStart"
+            - "callConnect"
+            - "callEnd"
         message:
           type: string
           maxLength: 512
