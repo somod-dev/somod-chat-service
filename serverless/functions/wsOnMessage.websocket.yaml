@@ -36,8 +36,9 @@ $default:
             - "sessionStart"
             - "sessionExtend"
             - "sessionEnd"
-            - "initiated"
-            - "declined"
+            - "callStart"
+            - "callConnect"
+            - "callEnd"
         message:
           type: string
           maxLength: 512

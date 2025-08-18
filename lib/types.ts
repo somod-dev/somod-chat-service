@@ -31,8 +31,9 @@ export type MessageInput = {
     | "sessionExtend"
     | "sessionEnd"
     | "sessionRequirementChange"
-    | "initiated"
-    | "declined";
+    | "callStart"
+    | "callConnect"
+    | "callEnd";
   message: string;
   sessionToken?: string;
 };
@@ -62,7 +63,8 @@ export const typeToAllowedActionsMap = {
     "sessionEnd",
     "sessionRequirementChange"
   ],
-  call: ["initiated", "declined"],
+  "audio-call": ["callStart", "callConnect", "callEnd"],
+  "video-call": ["callStart", "callConnect", "callEnd"],
   pooja: ["new", "edit"],
   donation: ["new", "edit"]
 };
