@@ -7,6 +7,14 @@ import { getUserIdFromEvent } from "../../lib/getUserIdFromEvent";
 
 const builder = new RouteBuilder();
 
+const typeToAllowedActionsMap = JSON.parse(
+  process.env.MAP_OF_TYPE_ACTION ?? "{}"
+);
+
+const sessionRequirement = JSON.parse(
+  process.env.MAP_OF_TYPE_ACTION_SESSION ?? "{}"
+);
+
 builder.add(
   "$default",
   async (message: Message<MessageInput & { wsMsgId: string }>, event) => {
@@ -14,7 +22,8 @@ builder.add(
 
     const messageValidationError = await validateIncomingMessage(
       message.body,
-      userId
+      userId,
+      typeToAllowedActionsMap
     );
     if (messageValidationError) {
       return messageValidationError;
@@ -25,6 +34,7 @@ builder.add(
       message.body.threadId,
       message.body.type,
       message.body.action,
+      sessionRequirement,
       message.body.sessionToken
     );
     if (sessionIdResult.error) {

@@ -16,6 +16,14 @@ const dynamodb = new DynamoDBClient();
 
 const builder = new RouteBuilder();
 
+const typeToAllowedActionsMap = JSON.parse(
+  process.env.MAP_OF_TYPE_ACTION ?? "{}"
+);
+
+const sessionRequirement = JSON.parse(
+  process.env.MAP_OF_TYPE_ACTION_SESSION ?? "{}"
+);
+
 const postMessageHandler: RouteHandler<MessageInput> = async (
   request,
   event
@@ -26,7 +34,8 @@ const postMessageHandler: RouteHandler<MessageInput> = async (
 
   const messageValidationError = await validateIncomingMessage(
     request.body,
-    userId
+    userId,
+    typeToAllowedActionsMap
   );
   if (messageValidationError) {
     return messageValidationError;
@@ -37,6 +46,7 @@ const postMessageHandler: RouteHandler<MessageInput> = async (
     request.body.threadId,
     request.body.type,
     request.body.action,
+    sessionRequirement,
     request.body.sessionToken
   );
   if (sessionIdResult.error) {

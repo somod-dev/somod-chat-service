@@ -168,6 +168,12 @@ Resources:
             SOMOD::Parameter: chat.session.jwt.secret
           SESSION_FORCE:
             SOMOD::Parameter: chat.session.force
+          MAP_OF_TYPE_ACTION:
+            SOMOD::JsonStringify:
+              SOMOD::Parameter: chat.typeToAllowedActionsMap
+          MAP_OF_TYPE_ACTION_SESSION:
+            SOMOD::JsonStringify:
+              SOMOD::Parameter: chat.sessionRequirementMap
 
       Policies:
         - Version: "2012-10-17"
@@ -614,6 +620,12 @@ Resources:
             SOMOD::Parameter: chat.session.jwt.secret
           SESSION_FORCE:
             SOMOD::Parameter: chat.session.force
+          MAP_OF_TYPE_ACTION:
+            SOMOD::JsonStringify:
+              SOMOD::Parameter: chat.typeToAllowedActionsMap
+          MAP_OF_TYPE_ACTION_SESSION:
+            SOMOD::JsonStringify:
+              SOMOD::Parameter: chat.sessionRequirementMap
       Policies:
         - Version: "2012-10-17"
           Statement:

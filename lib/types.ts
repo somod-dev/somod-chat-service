@@ -15,25 +15,8 @@ export type Thread = {
 
 export type MessageInput = {
   threadId: string;
-  type:
-    | "text"
-    | "image"
-    | "control"
-    | "audio-call"
-    | "video-call"
-    | "pooja"
-    | "donation";
-  action:
-    | "new"
-    | "edit"
-    | "delete"
-    | "sessionStart"
-    | "sessionExtend"
-    | "sessionEnd"
-    | "sessionRequirementChange"
-    | "callStart"
-    | "callConnect"
-    | "callEnd";
+  type: "text" | "image" | "control" | "audio-call" | "video-call";
+  action: "new" | "edit" | "delete" | "callStart" | "callConnect" | "callEnd";
   message: string;
   sessionToken?: string;
 };
@@ -51,36 +34,4 @@ export type Session = {
   participants: string[];
   startTime: number;
   endTime: number;
-};
-
-export const typeToAllowedActionsMap = {
-  text: ["new", "edit"],
-  image: ["new", "edit"],
-  control: [
-    "delete",
-    "sessionStart",
-    "sessionExtend",
-    "sessionEnd",
-    "sessionRequirementChange"
-  ],
-  "audio-call": ["callStart", "callConnect", "callEnd"],
-  "video-call": ["callStart", "callConnect", "callEnd"],
-  pooja: ["new", "edit"],
-  donation: ["new", "edit"]
-};
-
-/**
- * Store the message type and actions for which the session token is required
- */
-export const sessionRequirement: Record<
-  string,
-  Record<string, undefined | "thread" | "always">
-> = {
-  text: { new: "thread", edit: "thread" },
-  image: { new: "thread", edit: "thread" },
-  control: {
-    sessionStart: "always",
-    sessionExtend: "always",
-    sessionEnd: "always"
-  }
 };

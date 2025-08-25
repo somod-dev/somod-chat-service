@@ -1,5 +1,5 @@
 import { verify } from "jsonwebtoken";
-import { Session, sessionRequirement } from "./types";
+import { Session } from "./types";
 import { threadCache } from "./threadCache";
 
 const sessionJwtSecret = process.env.SESSION_SECRET ?? "";
@@ -20,6 +20,10 @@ export const handleSessionToken = async (
   threadId: string,
   type: string,
   action: string,
+  sessionRequirement: Record<
+    string,
+    Record<string, undefined | "thread" | "always">
+  >,
   sessionToken?: string
 ): Promise<SessionIdResult> => {
   const result: SessionIdResult = { sessionId: "" };

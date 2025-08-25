@@ -17,25 +17,11 @@
             type: string
             pattern: ^[a-f0-9]{32}$
           type:
-            enum:
-              - "text"
-              - "image"
-              - "control"
-              - "audio-call"
-              - "video-call"
-              - "pooja"
-              - "donation"
+            type: string
+            pattern: ^.{1,32}$
           action:
-            enum:
-              - "new"
-              - "edit"
-              - "delete"
-              - "sessionStart"
-              - "sessionExtend"
-              - "sessionEnd"
-              - "callStart"
-              - "callConnect"
-              - "callEnd"
+            type: string
+            pattern: ^.{1,32}$
           message:
             type: string
             maxLength: 512

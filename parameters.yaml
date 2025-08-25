@@ -16,3 +16,30 @@ parameters:
   chat.session.force:
     type: boolean
     default: false
+  chat.typeToAllowedActionsMap:
+    type: object
+    additionalProperties:
+      type: array
+      items:
+        type: string
+    default:
+      {
+        text: ["new", "edit"],
+        image: ["new", "edit"],
+        control: ["delete"],
+        "audio-call": ["callStart", "callConnect", "callEnd"],
+        "video-call": ["callStart", "callConnect", "callEnd"]
+      }
+  chat.sessionRequirementMap:
+    type: object
+    additionalProperties:
+      type: object
+      additionalProperties:
+        enum:
+          - thread
+          - always
+    default:
+      {
+        text: { new: "thread", edit: "thread" },
+        image: { new: "thread", edit: "thread" }
+      }

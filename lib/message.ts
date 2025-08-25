@@ -1,5 +1,5 @@
 import { marshall } from "@aws-sdk/util-dynamodb";
-import { Message, MessageInput, typeToAllowedActionsMap } from "./types";
+import { Message, MessageInput } from "./types";
 import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 import { threadCache } from "./threadCache";
 
@@ -35,7 +35,8 @@ export const putMessage = async (
 
 export const validateIncomingMessage = async (
   message: MessageInput,
-  userId: string
+  userId: string,
+  typeToAllowedActionsMap: Record<string, string[]>
 ) => {
   let errorMessage: string | undefined = undefined;
   const thread = await threadCache.get(message.threadId);
@@ -44,6 +45,10 @@ export const validateIncomingMessage = async (
     errorMessage = "Invalid threadId : does not exist";
   } else if (!thread.participants.includes(userId)) {
     errorMessage = `Invalid threadId : from '${userId}' is not a participant in thread '${thread.id}'`;
+  } else if (!typeToAllowedActionsMap[message.type]) {
+    errorMessage = `Invalid type : type must be one of (${typeToAllowedActionsMap[
+      message.type
+    ].join(", ")})`;
   } else if (!typeToAllowedActionsMap[message.type].includes(message.action)) {
     errorMessage = `Invalid action : action must be '${typeToAllowedActionsMap[
       message.type
