@@ -41,7 +41,8 @@ const notify = async (userId: string, message: Message) => {
 
 const streamHandler: DynamoDBStreamHandler = async event => {
   const messageRaw = event.Records[0]?.dynamodb?.NewImage;
-  if (messageRaw) {
+  const eventName = event.Records[0]?.eventName ?? "";
+  if (messageRaw && eventName != "REMOVE") {
     const message = unmarshall(
       messageRaw as Record<string, AttributeValue>
     ) as Message & { userId: string };
