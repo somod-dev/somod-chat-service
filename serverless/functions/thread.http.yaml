@@ -30,6 +30,11 @@
               type: number
             minItems: 0
             maxItems: 2
+          attributes:
+            type: object
+            additionalProperties:
+              type: string
+            maxProperties: 10
 
 /thread/{id}:
   GET:

@@ -1,5 +1,6 @@
 export type ThreadInput = {
   participants: string[];
+  attributes?: Record<string, string>;
 } & ThreadSessionRequired;
 
 export type ThreadSessionRequired = {
