@@ -15,7 +15,11 @@ export const putMessage = async (
     seqNo: Date.now()
   };
 
-  const messageWithKeys: Message & { userId: string } = { ...msg, userId };
+  const messageWithKeys: Message & { userId: string; expiresAt: number } = {
+    ...msg,
+    userId,
+    expiresAt: new Date().getTime() / 1000 + 90 * 24 * 60 * 60 // 90 days from now
+  };
 
   const putItemCommand = new PutItemCommand({
     TableName: tableName,

@@ -53,6 +53,9 @@ Resources:
           AttributeType: "N"
       StreamSpecification:
         StreamViewType: NEW_IMAGE
+      TimeToLiveSpecification:
+        AttributeName: "expiresAt"
+        Enabled: true
 
   MessageStreamHandlerDLQ:
     Type: AWS::SQS::Queue

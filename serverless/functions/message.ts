@@ -6,7 +6,8 @@ import { v1 as v1uuid } from "uuid";
 import {
   QueryCommand,
   DynamoDBClient,
-  QueryCommandInput
+  QueryCommandInput,
+  AttributeValue
 } from "@aws-sdk/client-dynamodb";
 import { convertToAttr, unmarshall } from "@aws-sdk/util-dynamodb";
 import { handleSessionToken } from "../../lib/sessionUtil";
@@ -104,10 +105,10 @@ const syncMessagesHandler: RouteHandler<
     KeyConditionExpression: "#userId = :userId",
     ExpressionAttributeNames: {
       "#userId": "userId"
-    },
+    } as Record<string, string>,
     ExpressionAttributeValues: {
       ":userId": convertToAttr(userId)
-    },
+    } as Record<string, AttributeValue>,
     Limit: 100
   } satisfies QueryCommandInput;
 
@@ -124,6 +125,7 @@ const syncMessagesHandler: RouteHandler<
   const messages = (result.Items || []).map(item => {
     const message = unmarshall(item);
     delete message.userId;
+    delete message.expiresAt;
     return message;
   });
 
