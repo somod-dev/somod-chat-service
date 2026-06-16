@@ -1,4 +1,4 @@
 export * from "./types";
 export { UserProviderMiddlewareKey } from "./constants";
 export * from "./cache";
-export { putMessage } from "./message";
+export { putMessage, getMessageTTL } from "./message";

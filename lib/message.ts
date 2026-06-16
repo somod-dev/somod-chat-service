@@ -5,6 +5,14 @@ import { threadCache } from "./threadCache";
 
 const dynamodb = new DynamoDBClient();
 
+const msgTTL = parseInt(process.env.CHAT_MESSAGE_TTL ?? "7776000", 10); // 3 months in seconds
+
+export const getMessageTTL = (now?: number) => {
+  const _now = now ?? Date.now();
+  const __now = Math.floor(_now / 1000);
+  return __now + msgTTL;
+};
+
 export const putMessage = async (
   tableName: string,
   userId: string,
@@ -18,7 +26,7 @@ export const putMessage = async (
   const messageWithKeys: Message & { userId: string; expiresAt: number } = {
     ...msg,
     userId,
-    expiresAt: new Date().getTime() / 1000 + 90 * 24 * 60 * 60 // 90 days from now
+    expiresAt: getMessageTTL()
   };
 
   const putItemCommand = new PutItemCommand({

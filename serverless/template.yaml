@@ -87,6 +87,8 @@ Resources:
           MSG_NOTIFICATION_TOPIC:
             SOMOD::Ref:
               resource: MessageNotificationTopic
+          CHAT_MESSAGE_TTL:
+            SOMOD::Parameter: chat.message.ttl
       Policies:
         - Version: "2012-10-17"
           Statement:
@@ -177,6 +179,8 @@ Resources:
           MAP_OF_TYPE_ACTION_SESSION:
             SOMOD::JsonStringify:
               SOMOD::Parameter: chat.sessionRequirementMap
+          CHAT_MESSAGE_TTL:
+            SOMOD::Parameter: chat.message.ttl
 
       Policies:
         - Version: "2012-10-17"
@@ -629,6 +633,8 @@ Resources:
           MAP_OF_TYPE_ACTION_SESSION:
             SOMOD::JsonStringify:
               SOMOD::Parameter: chat.sessionRequirementMap
+          CHAT_MESSAGE_TTL:
+            SOMOD::Parameter: chat.message.ttl
       Policies:
         - Version: "2012-10-17"
           Statement:

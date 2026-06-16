@@ -16,6 +16,9 @@ parameters:
   chat.session.force:
     type: boolean
     default: false
+  chat.message.ttl:
+    type: integer
+    default: 7776000 # 3 months in seconds
   chat.typeToAllowedActionsMap:
     type: object
     additionalProperties:
